@@ -85,7 +85,9 @@ class _AppTextFieldState extends State<AppTextField> {
   String getLabel(String text) {
     final regexp = RegExp(r"!\*.+\(.*?.*?\)=(.*?)\*!");
     print("Text > $text");
-    regexp.allMatches(text).forEach((element) { print("Element > ${element.group(1)}");});
+    regexp.allMatches(text).forEach((element) {
+      print("Element > ${element.group(1)}");
+    });
     print("Group > ${regexp.allMatches(text).first.group(1)}");
     print("Widget TYPE > ${widget.type}");
     return regexp.allMatches(text).first.group(1) ?? "";
@@ -98,6 +100,7 @@ class _AppTextFieldState extends State<AppTextField> {
   @override
   void initState() {
     super.initState();
+    print(widget.phrase);
   }
 
   TextInputType? setKeyboardType() {

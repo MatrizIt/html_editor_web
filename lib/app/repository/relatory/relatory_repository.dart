@@ -20,7 +20,7 @@ class RelatoryRepository extends IRelatoryRepository {
   }
 
   String getDatetime() {
-    return DateFormat("yyyy-MM-dd").format(DateTime.parse("2023-08-03"));
+    return DateFormat("yyyy-MM-dd").format(DateTime.now());
   }
 
   @override

@@ -5,9 +5,11 @@ import 'package:html_editor_web/app/model/teaching_model.dart';
 class ScripModel {
   final String title;
   final List<TeachingModel> teachings;
+  final int leading;
   ScripModel({
     required this.title,
     required this.teachings,
+    required this.leading,
   });
 
   Map<String, dynamic> toMap() {
@@ -27,6 +29,7 @@ class ScripModel {
                 ?.map((teaching) => TeachingModel.fromMap(teaching)) ??
             const [],
       ),
+      leading: int.tryParse(map['entrelinhas'] ?? "0") ?? 0,
     );
   }
 

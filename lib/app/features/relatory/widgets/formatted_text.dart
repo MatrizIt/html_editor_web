@@ -1,4 +1,4 @@
-import 'dart:async';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -44,15 +44,12 @@ class _FormattedTextState extends State<FormattedText> {
 
   @override
   Widget build(BuildContext context) {
-    //final regex = RegExp(r"\[\=.*?\((.*?)\)\]");
     final regex = RegExp(r"!\*(.*?)\*!");
-
 
     final List<InlineSpan> inlineSpans = [];
     int start = 0;
 
-    for (final match
-        in regex.allMatches(widget.text.replaceAll("</br>", "\n"))) {
+    for (final match in regex.allMatches(widget.text)) {
       final phrase = match.group(0);
       final phraseStart = match.start;
       final phraseEnd = match.end;

@@ -19,12 +19,6 @@ class RelatoryPage extends StatefulWidget {
 class _RelatoryPageState extends RelatoryView<RelatoryPage> {
   String result = '';
 
-  @override
-  void initState() {
-    super.initState();
-    widget.scrips.forEach(print);
-  }
-
   final List<PhraseEditingController> controllers = [];
 
   @override
