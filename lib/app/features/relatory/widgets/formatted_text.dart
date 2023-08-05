@@ -64,22 +64,45 @@ class _FormattedTextState extends State<FormattedText> {
             ),
           ),
         );
-        inlineSpans.add(
-          WidgetSpan(
-            child: SizedBox(
-              height: 25,
-              child: IntrinsicWidth(
-                child: AppTextField(
-                  phrase: phrase,
-                  onChanged: (text) {
-                    controllers[controllers.indexOf(phraseCtrl)].text = text;
-                  },
-                  controller: controllers[controllers.indexOf(phraseCtrl)],
+        if (phrase.startsWith("!**")) {
+          inlineSpans.add(
+            WidgetSpan(
+              child: Container(
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: Colors.red,
+                    width: 1,
+                  ),
+                  borderRadius: BorderRadius.circular(5),
+                ),
+                padding: const EdgeInsets.all(2),
+                child: HtmlWidget(
+                  phrase
+                      .replaceAll("!", "")
+                      .replaceAll("*", "")
+                      .replaceAll("=", ""),
                 ),
               ),
             ),
-          ),
-        );
+          );
+        } else {
+          inlineSpans.add(
+            WidgetSpan(
+              child: SizedBox(
+                height: 25,
+                child: IntrinsicWidth(
+                  child: AppTextField(
+                    phrase: phrase,
+                    onChanged: (text) {
+                      controllers[controllers.indexOf(phraseCtrl)].text = text;
+                    },
+                    controller: controllers[controllers.indexOf(phraseCtrl)],
+                  ),
+                ),
+              ),
+            ),
+          );
+        }
 
         start = phraseEnd;
       }
