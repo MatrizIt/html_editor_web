@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -7,11 +5,15 @@ import 'package:html_editor_web/app/features/relatory/widgets/app_text_field.dar
 import 'package:html_editor_web/app/core/ui/helpers/phrase_editing_controller.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 
+import '../../../model/scrip_model.dart';
+
 class FormattedText extends StatefulWidget {
-  String text;
+  final List<ScripModel> scrips;
+  final String text;
   final Function(String) onGeneratedText;
   FormattedText({
     super.key,
+    required this.scrips,
     required this.text,
     required this.onGeneratedText,
   });
@@ -39,77 +41,87 @@ class _FormattedTextState extends State<FormattedText> {
       }
     }
     text = text.replaceAll(RegExp(r"!\*.+\(.*?.*?\)=.*?\*!"), "");
-    Modular.to.pushNamed('/result_preview/', arguments: text);
+    Modular.to.pushNamed(
+      '/result_preview/',
+      arguments: text,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    final regex = RegExp(r"!\*(.*?)\*!");
-
     final List<InlineSpan> inlineSpans = [];
-    int start = 0;
 
-    for (final match in regex.allMatches(widget.text)) {
-      final phrase = match.group(0);
-      final phraseStart = match.start;
-      final phraseEnd = match.end;
-
-      if (phrase != null) {
-        final phraseCtrl = PhraseEditingController(phrase: phrase);
-        controllers.add(phraseCtrl);
-        inlineSpans.add(
-          WidgetSpan(
-            child: HtmlWidget(
-              widget.text.substring(start, phraseStart),
-            ),
+    for (ScripModel scrip in widget.scrips) {
+      inlineSpans.add(
+        TextSpan(
+          text: '${scrip.title}\n\n',
+          style: GoogleFonts.inter(
+            fontWeight: FontWeight.bold,
           ),
-        );
-        if (phrase.startsWith("!**")) {
+        ),
+      );
+
+      final regex = RegExp(r"!\*(.*?)\*!");
+      int start = 0;
+      final text = scrip.teachings[0].text;
+      for (final match in regex.allMatches(
+        text.replaceAll("</br>", "\n"),
+      )) {
+        final phrase = match.group(0);
+        final phraseStart = match.start;
+        final phraseEnd = match.end;
+
+        if (phrase != null) {
+          final phraseCtrl = PhraseEditingController(phrase: phrase);
+          controllers.add(phraseCtrl);
           inlineSpans.add(
-            WidgetSpan(
-              child: Container(
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: Colors.red,
-                    width: 1,
-                  ),
-                  borderRadius: BorderRadius.circular(5),
-                ),
-                padding: const EdgeInsets.all(2),
-                child: HtmlWidget(
-                  phrase
-                      .replaceAll("!", "")
-                      .replaceAll("*", "")
-                      .replaceAll("=", ""),
-                ),
-              ),
+            TextSpan(
+              text: text
+                  .substring(start, phraseStart)
+                  .replaceAll(RegExp(r"<[^>]+>"), "")
+                  .replaceAll("&nbsp;", " "),
             ),
           );
-        } else {
-          inlineSpans.add(
-            WidgetSpan(
-              child: SizedBox(
-                height: 25,
-                child: IntrinsicWidth(
-                  child: AppTextField(
-                    phrase: phrase,
-                    onChanged: (text) {
-                      controllers[controllers.indexOf(phraseCtrl)].text = text;
-                    },
-                    controller: controllers[controllers.indexOf(phraseCtrl)],
+          if (phrase.startsWith("!**")) {
+            inlineSpans.add(
+              TextSpan(
+                text: phrase
+                    .replaceAll("!", "")
+                    .replaceAll("*", "")
+                    .replaceAll("=", ""),
+              ),
+            );
+          } else {
+            inlineSpans.add(
+              WidgetSpan(
+                child: SizedBox(
+                  height: 25,
+                  child: IntrinsicWidth(
+                    child: AppTextField(
+                      phrase: phrase,
+                      onChanged: (text) {
+                        controllers[controllers.indexOf(phraseCtrl)].text =
+                            text;
+                      },
+                      controller: controllers[controllers.indexOf(phraseCtrl)],
+                    ),
                   ),
                 ),
               ),
-            ),
-          );
+            );
+          }
+
+          start = phraseEnd;
         }
-
-        start = phraseEnd;
       }
-    }
 
-    inlineSpans
-        .add(WidgetSpan(child: HtmlWidget(widget.text.substring(start))));
+      inlineSpans.add(
+        TextSpan(
+          text:
+              "${text.substring(start).replaceAll(RegExp(r"<[^>]+>"), "").replaceAll("&nbsp;", " ")}\n\n",
+        ),
+      );
+    }
 
     return Scaffold(
       floatingActionButton: FloatingActionButton(

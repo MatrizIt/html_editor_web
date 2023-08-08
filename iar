@@ -1,0 +1,23 @@
+[33mcommit 51ee2650485db15b2608f5ab15b5e1fe9370d495[m[33m ([m[1;36mHEAD -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: MiguelMarquesIT <miguel.marques@matrizit.com.br>
+Date:   Sat Aug 5 16:59:01 2023 -0300
+
+    feat: implementing logic to handle !** in text
+
+[33mcommit b441e02a0fdf44b7ffe4d4e7950097c47d63847a[m
+Author: MiguelMarquesIT <miguel.marques@matrizit.com.br>
+Date:   Fri Aug 4 14:34:15 2023 -0300
+
+    feat: implementing entrelinhas logic
+
+[33mcommit da6813fcf0e1bba65a5db1dbdb0e09cfdf4c349d[m
+Author: Giovanni Zaghi <vanni.freitas@hotmail.com>
+Date:   Fri Aug 4 13:35:59 2023 -0300
+
+    feat: edito html
+
+[33mcommit d49f6001aaf9ce763c7b02fcd794ac57d40c34e1[m
+Author: Giovanni Zaghi de Freitas <48766380+GiovanniZaghi@users.noreply.github.com>
+Date:   Fri Aug 4 13:33:35 2023 -0300
+
+    Initial commit

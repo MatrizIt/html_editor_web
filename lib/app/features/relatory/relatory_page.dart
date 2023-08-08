@@ -32,6 +32,7 @@ class _RelatoryPageState extends RelatoryView<RelatoryPage> {
         minScale: 0.5,
         maxScale: 4.0, //
         child: FormattedText(
+          scrips: widget.scrips,
           text: text,
           onGeneratedText: (text) async {
             await showDialog(
