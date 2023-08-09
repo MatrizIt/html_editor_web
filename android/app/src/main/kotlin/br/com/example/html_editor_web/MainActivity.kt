@@ -1,4 +1,4 @@
-package br.com.example.html_editor_web
+package br.com.example.reportpad
 
 import io.flutter.embedding.android.FlutterActivity
 

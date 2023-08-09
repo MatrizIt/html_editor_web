@@ -1,16 +1,28 @@
 import 'dart:convert';
 
-import 'package:html_editor_web/app/model/teaching_model.dart';
+import 'package:reportpad/app/model/teaching_model.dart';
 
 class ScripModel {
   final String title;
   final List<TeachingModel> teachings;
   final int leading;
+  bool isVisible = false;
+  int selectedTeaching = 0;
   ScripModel({
     required this.title,
     required this.teachings,
     required this.leading,
   });
+
+  String get selectedTeachingText => teachings[selectedTeaching].text;
+
+  changeVisibility() {
+    isVisible = !isVisible;
+  }
+
+  changeSelectedTeaching(int index) {
+    selectedTeaching = index;
+  }
 
   Map<String, dynamic> toMap() {
     return {

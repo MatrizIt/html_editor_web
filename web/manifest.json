@@ -1,6 +1,6 @@
 {
-    "name": "html_editor_web",
-    "short_name": "html_editor_web",
+    "name": "reportpad",
+    "short_name": "reportpad",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

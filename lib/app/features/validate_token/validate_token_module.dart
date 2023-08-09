@@ -1,5 +1,5 @@
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:html_editor_web/app/features/validate_token/validate_token_page.dart';
+import 'package:reportpad/app/features/validate_token/validate_token_page.dart';
 
 class ValidateTokenModule extends Module {
   @override

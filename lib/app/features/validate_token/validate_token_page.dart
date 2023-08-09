@@ -2,9 +2,9 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:html_editor_web/app/core/ui/extensions/size_extensions.dart';
-import 'package:html_editor_web/app/features/validate_token/view/validate_token_view.dart';
-import 'package:html_editor_web/app/repository/auth/i_auth_repository.dart';
+import 'package:reportpad/app/core/ui/extensions/size_extensions.dart';
+import 'package:reportpad/app/features/validate_token/view/validate_token_view.dart';
+import 'package:reportpad/app/repository/auth/i_auth_repository.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 
 class ValidateTokenPage extends StatefulWidget {

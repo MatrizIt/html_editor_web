@@ -2,8 +2,8 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:html_editor_web/app/features/validate_token/validate_token_page.dart';
-import 'package:html_editor_web/app/repository/auth/i_auth_repository.dart';
+import 'package:reportpad/app/features/validate_token/validate_token_page.dart';
+import 'package:reportpad/app/repository/auth/i_auth_repository.dart';
 
 import '../../../core/ui/helpers/messages.dart';
 

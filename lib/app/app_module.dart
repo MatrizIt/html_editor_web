@@ -1,13 +1,13 @@
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:html_editor_web/app/features/home/home_module.dart';
-import 'package:html_editor_web/app/features/relatory/relatory_module.dart';
-import 'package:html_editor_web/app/features/result_preview/result_preview_module.dart';
-import 'package:html_editor_web/app/features/validate_token/validate_token_module.dart';
-import 'package:html_editor_web/app/features/worklist/worklist_module.dart';
-import 'package:html_editor_web/app/repository/auth/auth_repository.dart';
-import 'package:html_editor_web/app/repository/auth/i_auth_repository.dart';
-import 'package:html_editor_web/app/repository/relatory/i_relatory_repository.dart';
-import 'package:html_editor_web/app/repository/relatory/relatory_repository.dart';
+import 'package:reportpad/app/features/home/home_module.dart';
+import 'package:reportpad/app/features/relatory/relatory_module.dart';
+import 'package:reportpad/app/features/result_preview/result_preview_module.dart';
+import 'package:reportpad/app/features/validate_token/validate_token_module.dart';
+import 'package:reportpad/app/features/worklist/worklist_module.dart';
+import 'package:reportpad/app/repository/auth/auth_repository.dart';
+import 'package:reportpad/app/repository/auth/i_auth_repository.dart';
+import 'package:reportpad/app/repository/relatory/i_relatory_repository.dart';
+import 'package:reportpad/app/repository/relatory/relatory_repository.dart';
 
 class AppModule extends Module {
   @override

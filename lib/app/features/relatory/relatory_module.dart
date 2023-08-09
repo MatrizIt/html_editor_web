@@ -1,6 +1,6 @@
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:html_editor_web/app/features/relatory/relatory_page.dart';
-import 'package:html_editor_web/app/model/scrip_model.dart';
+import 'package:reportpad/app/features/relatory/relatory_page.dart';
+import 'package:reportpad/app/model/scrip_model.dart';
 
 class RelatoryModule extends Module {
   @override
@@ -17,7 +17,11 @@ class RelatoryModule extends Module {
 
         final String title = routeArgs['Title'] ?? 'Default Title';
 
-       return RelatoryPage(scrips: scrips, title: title,);},
+        return RelatoryPage(
+          scrips: scrips,
+          title: title,
+        );
+      },
     );
   }
 }

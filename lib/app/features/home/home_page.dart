@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:html_editor_web/app/core/ui/extensions/size_extensions.dart';
-import 'package:html_editor_web/app/features/home/view/home_view.dart';
-import 'package:html_editor_web/app/repository/auth/i_auth_repository.dart';
+import 'package:reportpad/app/core/ui/extensions/size_extensions.dart';
+import 'package:reportpad/app/features/home/view/home_view.dart';
+import 'package:reportpad/app/repository/auth/i_auth_repository.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
@@ -53,7 +53,6 @@ class _HomePageState extends HomeView<HomePage> {
                       height: 10,
                     ),
                     IntlPhoneField(
-
                       decoration: const InputDecoration(
                         border: OutlineInputBorder(
                           borderSide: BorderSide(),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:html_editor_web/app/app_module.dart';
+import 'package:reportpad/app/app_module.dart';
 
 import 'app/app_widget.dart';
 

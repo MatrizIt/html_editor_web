@@ -1,5 +1,5 @@
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:html_editor_web/app/features/result_preview/result_preview_page.dart';
+import 'package:reportpad/app/features/result_preview/result_preview_page.dart';
 
 class ResultPreviewModule extends Module {
   @override

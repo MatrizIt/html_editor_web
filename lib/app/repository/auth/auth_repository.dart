@@ -1,5 +1,5 @@
-import 'package:html_editor_web/app/repository/auth/i_auth_repository.dart';
-import 'package:html_editor_web/app/repository/repository.dart';
+import 'package:reportpad/app/repository/auth/i_auth_repository.dart';
+import 'package:reportpad/app/repository/repository.dart';
 
 class AuthRepository extends Repository implements IAuthRepository {
   @override

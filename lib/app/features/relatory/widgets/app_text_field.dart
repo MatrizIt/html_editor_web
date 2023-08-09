@@ -2,7 +2,7 @@ import 'package:currency_text_input_formatter/currency_text_input_formatter.dart
 import 'package:dropdown_textfield/dropdown_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:html_editor_web/app/core/ui/helpers/phrase_editing_controller.dart';
+import 'package:reportpad/app/core/ui/helpers/phrase_editing_controller.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:intl/intl.dart';
 
@@ -32,40 +32,39 @@ class AppTextField extends StatefulWidget {
   }) {
     RegExp exp = RegExp(r'!\*([^\(]+)\(([^\)]+)\)=?(.*?)?\*!');
     print("Phrases > $phrase");
-      RegExpMatch match = exp.allMatches(phrase).first;
-      String typeRecognized = match.group(1) ?? "";
-      switch (typeRecognized) {
-        case 'multiselect':
-          type = Type.multiselection;
-          break;
-        case 'select':
-          type = Type.selection;
-          break;
-        case 'num':
-          type = Type.number;
-          break;
-        case 'cpf':
-          type = Type.cpf;
-          break;
-        case 'currency':
-          type = Type.currency;
-          break;
-        case 'data':
-          type = Type.date;
-          break;
-        case 'text':
-        default:
-          type = Type.text;
-          break;
-      }
-      if ([Type.multiselection, Type.selection].contains(type)) {
-        match.group(2)!.split(",").forEach(
-              (option) {
-            options.add(option);
-          },
-        );
-      }
-
+    RegExpMatch match = exp.allMatches(phrase).first;
+    String typeRecognized = match.group(1) ?? "";
+    switch (typeRecognized) {
+      case 'multiselect':
+        type = Type.multiselection;
+        break;
+      case 'select':
+        type = Type.selection;
+        break;
+      case 'num':
+        type = Type.number;
+        break;
+      case 'cpf':
+        type = Type.cpf;
+        break;
+      case 'currency':
+        type = Type.currency;
+        break;
+      case 'data':
+        type = Type.date;
+        break;
+      case 'text':
+      default:
+        type = Type.text;
+        break;
+    }
+    if ([Type.multiselection, Type.selection].contains(type)) {
+      match.group(2)!.split(",").forEach(
+        (option) {
+          options.add(option);
+        },
+      );
+    }
   }
 
   @override
@@ -85,7 +84,7 @@ class _AppTextFieldState extends State<AppTextField> {
       MultiValueDropDownController();
 
   String? getLabel(String text) {
-    try{
+    try {
       final regexp = RegExp(r"!\*.+\(.*?.*?\)=(.*?)\*!");
       print("Text > $text");
       regexp.allMatches(text).forEach((element) {
@@ -94,7 +93,7 @@ class _AppTextFieldState extends State<AppTextField> {
       print("Group > ${regexp.allMatches(text).first.group(1)}");
       print("Widget TYPE > ${widget.type}");
       return regexp.allMatches(text).first.group(1) ?? "";
-    }catch(e){
+    } catch (e) {
       return null;
     }
     /*return text.replaceAllMapped(
@@ -222,15 +221,11 @@ class _AppTextFieldState extends State<AppTextField> {
             keyboardType: setKeyboardType(),
             controller: widget.controller,
             decoration: InputDecoration(
-              border: const UnderlineInputBorder(borderSide: BorderSide.none),
-              contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-              hintText: getLabel(widget.phrase) ?? "00",
-              hintStyle: TextStyle(
-                color: Colors.blue
-              )
-            ),
-
+                border: const UnderlineInputBorder(borderSide: BorderSide.none),
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                hintText: getLabel(widget.phrase) ?? "00",
+                hintStyle: TextStyle(color: Colors.blue)),
           );
       }
     }();

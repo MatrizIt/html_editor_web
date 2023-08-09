@@ -1,4 +1,4 @@
-import 'package:html_editor_web/app/repository/repository.dart';
+import 'package:reportpad/app/repository/repository.dart';
 
 import '../../model/scrip_model.dart';
 import '../../model/survey_model.dart';

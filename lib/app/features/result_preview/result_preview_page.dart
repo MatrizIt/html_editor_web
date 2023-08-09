@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
-import 'package:html_editor_web/app/core/ui/extensions/size_extensions.dart';
+import 'package:reportpad/app/core/ui/extensions/size_extensions.dart';
 import 'package:zoom_widget/zoom_widget.dart';
 
 class ResultPreviewPage extends StatelessWidget {
