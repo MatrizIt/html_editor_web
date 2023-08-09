@@ -13,20 +13,20 @@ class RelatoryRepository extends IRelatoryRepository {
     this.phone = phone;
     final date = getDatetime();
     final response = await get(
-        "PegarAgenda?chave=5511985858505&ExibirDat=${true}&dataInicial=$date&dataFinal=$date&workflow=${0}");
+        "PegarAgenda?chave=$phone&ExibirDat=${true}&dataInicial=$date&dataFinal=$date&workflow=${0}");
     return (jsonDecode(response?.data) as List)
         .map<SurveyModel>((survey) => SurveyModel.fromMap(survey))
         .toList();
   }
 
   String getDatetime() {
-    return DateFormat("yyyy-MM-dd").format(DateTime(2023, 8, 6));
+    return DateFormat("yyyy-MM-dd").format(DateTime.parse("2023-08-08"));
   }
 
   @override
   Future<List<ScripModel>> getScrips(String idSurvey) async {
     final response = await get(
-        "TitulosMesclados?chave=5511985858505&idAgendamento=$idSurvey");
+        "TitulosMesclados?chave=$phone&idAgendamento=$idSurvey");
     return (jsonDecode(response?.data) as List)
         .map<ScripModel>((scrip) => ScripModel.fromMap(scrip))
         .toList();

@@ -12,8 +12,11 @@ abstract class RelatoryView<T extends RelatoryPage> extends State<T> {
 
   void mountText() {
     for (var scrip in widget.scrips) {
-      text += "<b>${scrip.title}</b>\n";
-      text += "${scrip.teachings[0].text}\n\n";
+      text += "<b>${scrip.title}</b>";
+      if(scrip.teachings.isNotEmpty){
+        text += "${scrip.teachings[0].text}";
+      }
+      text += "Ocorreu um erro";
       for (int i = 0; i <= scrip.leading; i++) {
         text += "</br>";
       }

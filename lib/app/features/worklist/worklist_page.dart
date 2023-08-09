@@ -22,7 +22,7 @@ class _WorklistPageState extends WorklistView<WorklistPage> {
   void initState() {
     super.initState();
     repository = Modular.get<IRelatoryRepository>();
-    getSurveys();
+    getSurveys(widget.phone);
   }
 
   @override
@@ -67,7 +67,7 @@ class _WorklistPageState extends WorklistView<WorklistPage> {
               final hour = DateFormat("Hm").format(survey.scheduleDate);
               return GestureDetector(
                 onTap: () {
-                  getScrips(survey.id.toString());
+                  getScrips(survey.id.toString(), survey.procedureName);
                 },
                 child: Container(
                   width: .85.sw,

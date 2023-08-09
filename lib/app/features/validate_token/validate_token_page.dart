@@ -83,6 +83,7 @@ class _ValidateTokenPageState extends ValidateTokenView<ValidateTokenPage> {
                       child: PinCodeTextField(
                         controller: pinCtrl,
                         appContext: context,
+                        keyboardType: TextInputType.number,
                         length: 4,
                         cursorColor: Colors.black,
                         pinTheme: PinTheme(

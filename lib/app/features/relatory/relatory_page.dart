@@ -7,9 +7,10 @@ import '../../model/scrip_model.dart';
 
 class RelatoryPage extends StatefulWidget {
   final List<ScripModel> scrips;
+  final String title;
   const RelatoryPage({
     super.key,
-    required this.scrips,
+    required this.scrips, required this.title
   });
 
   @override
@@ -24,7 +25,7 @@ class _RelatoryPageState extends RelatoryView<RelatoryPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(title: Text(widget.title)),
       body: InteractiveViewer(
         boundaryMargin: const EdgeInsets.all(
           20.0,

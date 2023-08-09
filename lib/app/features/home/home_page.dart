@@ -53,9 +53,7 @@ class _HomePageState extends HomeView<HomePage> {
                       height: 10,
                     ),
                     IntlPhoneField(
-                      inputFormatters: [
-                        MaskTextInputFormatter(mask: "(##) #####-####"),
-                      ],
+
                       decoration: const InputDecoration(
                         border: OutlineInputBorder(
                           borderSide: BorderSide(),

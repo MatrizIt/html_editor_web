@@ -8,18 +8,18 @@ abstract class WorklistView<T extends StatefulWidget> extends State<T> {
   List<SurveyModel> worklist = [];
   bool isLoading = false;
 
-  Future<void> getSurveys() async {
+  Future<void> getSurveys(String phone) async {
     setState(() {
       isLoading = true;
     });
-    worklist = await repository.getSurveys("5511985858505");
+    worklist = await repository.getSurveys(phone);
     setState(() {
       isLoading = false;
     });
   }
 
-  Future<void> getScrips(String idSurvey) async {
+  Future<void> getScrips(String idSurvey, String title) async {
     final scrips = await repository.getScrips(idSurvey);
-    Modular.to.pushNamed('/relatory', arguments: scrips);
+    Modular.to.pushNamed('/relatory', arguments: {'Scrips' : scrips, 'Title': title});
   }
 }
