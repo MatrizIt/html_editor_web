@@ -137,8 +137,11 @@ class _FormattedTextState extends State<FormattedText> {
             TextSpan(
               text: text
                   .substring(start, phraseStart)
+                  .replaceAll("<br>", "\n")
+                  .replaceAll("</br>", "\n")
+                  .replaceAll("&nbsp;", " ")
                   .replaceAll(RegExp(r"<[^>]+>"), "")
-                  .replaceAll("&nbsp;", " "),
+                  ,
             ),
           );
           if (phrase.startsWith("!**")) {
@@ -155,6 +158,7 @@ class _FormattedTextState extends State<FormattedText> {
               WidgetSpan(
                 child: SizedBox(
                   height: 18,
+
                   child: IntrinsicWidth(
                     child: AppTextField(
                       phrase: phrase,
@@ -203,7 +207,7 @@ class _FormattedTextState extends State<FormattedText> {
     }
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.purple,
+        backgroundColor: Color.fromRGBO(0, 160, 0, 100),
         onPressed: () {
           generateText();
         },
@@ -214,7 +218,7 @@ class _FormattedTextState extends State<FormattedText> {
       ),
       body: SingleChildScrollView(
         child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 25),
             child: Column(
               children: inlineWidgets,
             )),

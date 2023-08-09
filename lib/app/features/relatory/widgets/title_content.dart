@@ -38,7 +38,7 @@ class _TitleContentState extends State<TitleContent> {
                 onPressed: widget.changeVisibility,
                 icon: Icon(widget.isVisible == true
                     ? Icons.close_outlined
-                    : Icons.refresh)),
+                    : Icons.refresh_outlined,color: widget.isVisible == true ? Colors.red : Colors.blue,)),
             widget.title,
             DropdownButtonHideUnderline(
               child: DropdownButton2(
@@ -48,7 +48,7 @@ class _TitleContentState extends State<TitleContent> {
                 selectedItemBuilder: (context) {
                   return [
                     SizedBox(
-                      width: MediaQuery.of(context).size.width * .1,
+                      width: MediaQuery.of(context).size.width * .10,
                     )
                   ];
                 },

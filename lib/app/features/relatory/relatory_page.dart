@@ -22,7 +22,7 @@ class _RelatoryPageState extends RelatoryView<RelatoryPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(widget.title)),
+      appBar: AppBar(title: Text(widget.title), backgroundColor: const Color.fromRGBO(1, 134, 167,100),),
       body: InteractiveViewer(
         boundaryMargin: const EdgeInsets.all(
           20.0,

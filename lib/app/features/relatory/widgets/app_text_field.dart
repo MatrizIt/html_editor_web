@@ -23,6 +23,7 @@ class AppTextField extends StatefulWidget {
 
   final Function(String text) onChanged;
   final PhraseEditingController controller;
+  var defaultValue = "";
 
   AppTextField({
     super.key,
@@ -31,9 +32,9 @@ class AppTextField extends StatefulWidget {
     required this.controller,
   }) {
     RegExp exp = RegExp(r'!\*([^\(]+)\(([^\)]+)\)=?(.*?)?\*!');
-    print("Phrases > $phrase");
     RegExpMatch match = exp.allMatches(phrase).first;
     String typeRecognized = match.group(1) ?? "";
+
     switch (typeRecognized) {
       case 'multiselect':
         type = Type.multiselection;
@@ -43,6 +44,7 @@ class AppTextField extends StatefulWidget {
         break;
       case 'num':
         type = Type.number;
+        defaultValue = "00";
         break;
       case 'cpf':
         type = Type.cpf;
@@ -52,10 +54,12 @@ class AppTextField extends StatefulWidget {
         break;
       case 'data':
         type = Type.date;
+        defaultValue = "01/01/2000";
         break;
       case 'text':
       default:
         type = Type.text;
+        defaultValue = "_____";
         break;
     }
     if ([Type.multiselection, Type.selection].contains(type)) {
@@ -86,12 +90,10 @@ class _AppTextFieldState extends State<AppTextField> {
   String? getLabel(String text) {
     try {
       final regexp = RegExp(r"!\*.+\(.*?.*?\)=(.*?)\*!");
-      print("Text > $text");
       regexp.allMatches(text).forEach((element) {
         print("Element > ${element.group(1)}");
       });
-      print("Group > ${regexp.allMatches(text).first.group(1)}");
-      print("Widget TYPE > ${widget.type}");
+
       return regexp.allMatches(text).first.group(1) ?? "";
     } catch (e) {
       return null;
@@ -168,13 +170,15 @@ class _AppTextFieldState extends State<AppTextField> {
               widget.onChanged(value.name);
             },
             textFieldDecoration: InputDecoration(
-                border: const UnderlineInputBorder(borderSide: BorderSide.none),
-                contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                hintText: parsedOptions[0].name,
-                disabledBorder: InputBorder.none,
-                hintStyle: const TextStyle(color: Colors.blue)),
+              border: const UnderlineInputBorder(borderSide: BorderSide.none),
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+              hintText: parsedOptions[0].name,
+              disabledBorder: InputBorder.none,
+              hintStyle: const TextStyle(color: Colors.blue),
+            ),
             dropDownList: parsedOptions,
+
           );
         case Type.multiselection:
           return DropDownTextField.multiSelection(
@@ -211,6 +215,7 @@ class _AppTextFieldState extends State<AppTextField> {
                 hintText: "${parsedOptions[0].name} ",
                 hintStyle: const TextStyle(color: Colors.blue)),
             dropDownList: parsedOptions,
+
           );
         default:
           return TextField(
@@ -224,8 +229,9 @@ class _AppTextFieldState extends State<AppTextField> {
                 border: const UnderlineInputBorder(borderSide: BorderSide.none),
                 contentPadding:
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                hintText: getLabel(widget.phrase) ?? "00",
+                hintText: getLabel(widget.phrase) ?? widget.defaultValue,
                 hintStyle: TextStyle(color: Colors.blue)),
+
           );
       }
     }();

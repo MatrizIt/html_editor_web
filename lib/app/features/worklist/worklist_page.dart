@@ -63,28 +63,61 @@ class _WorklistPageState extends WorklistView<WorklistPage> {
             },
             itemCount: worklist.length,
             itemBuilder: (context, index) {
+              worklist.sort((a, b) => a.scheduleDate.compareTo(b.scheduleDate));
               final survey = worklist[index];
               final hour = DateFormat("Hm").format(survey.scheduleDate);
-              return GestureDetector(
-                onTap: () {
-                  getScrips(survey.id.toString(), survey.procedureName);
-                },
-                child: Container(
-                  width: .85.sw,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 20,
-                    vertical: 15,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.blue,
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: Colors.black,
-                      width: 2,
+              return Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: GestureDetector(
+                  onTap: () {
+                    print("Survey > ${survey.id}");
+                    getScrips(survey.id.toString(), survey.procedureName);
+                  },
+                  child: Container(
+                    width: .85.sw,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 15,
+                    ),
+                    decoration: BoxDecoration(
+                      color: const Color.fromRGBO(1, 134, 167,100),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(
+                        color: Colors.black,
+                        width: 1,
+                      ),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(survey.procedureName, style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold
+                        ),),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(hour,style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold
+                            ),),
+
+                            Text(
+                                "Paciente: ${survey.patient}"),
+                            const Text(""),
+                            const Text(""),
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Text(survey.healthInsuranceName, textAlign: TextAlign.center,)
+                      ],
                     ),
                   ),
-                  child: Text(
-                      "$hour ${survey.patient} - ${survey.procedureName} - ${survey.healthInsuranceName}"),
                 ),
               );
             },

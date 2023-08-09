@@ -129,7 +129,7 @@ class _HomePageState extends HomeView<HomePage> {
       showTopSnackBar(
         Overlay.of(context),
         const CustomSnackBar.success(
-          message: "SMS Enviado com sucesso !",
+          message: "WhatsApp Enviado com sucesso !",
         ),
       );
     } else {
