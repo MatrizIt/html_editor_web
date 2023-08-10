@@ -38,7 +38,7 @@ class ScripModel {
 
   factory ScripModel.fromMap(Map<String, dynamic> map) {
     return ScripModel(
-      id: map["id"] ?? 0,
+      id: map["titulo"]["id"] ?? 0,
       title: map['titulo']['titulo'] ?? '',
       teachings: List<TeachingModel>.from(
         map['ensinamentos']

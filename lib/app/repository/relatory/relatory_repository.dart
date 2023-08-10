@@ -37,8 +37,8 @@ class RelatoryRepository extends IRelatoryRepository {
   Future<TeachingModel> getTeachings(String idTeaching, String idSurvey) async {
     final response = await get(
         "EnsinamentosMesclados?idEnsinamento=$idTeaching&idAgendamento=$idSurvey");
-    print("Res > $response");
-    print("Response data > ${jsonDecode(response?.data)['ensinamentos'][0]}");
+
+    print("Data Teaching > ${jsonDecode(response?.data)['ensinamentos'][0]}");
 
     return TeachingModel.fromMap(jsonDecode(response?.data)['ensinamentos'][0]);
   }

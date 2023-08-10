@@ -19,6 +19,7 @@ class TeachingModel {
       'id': id,
       'nome': name,
       'texto': text,
+      'gatilhos': gatilhos
     };
   }
 
@@ -41,5 +42,5 @@ class TeachingModel {
       TeachingModel.fromMap(json.decode(source));
 
   @override
-  String toString() => 'TeachingModel(id: $id, name: $name, text: $text)';
+  String toString() => 'TeachingModel(id: $id, name: $name, text: $text, gatilhos: $gatilhos)';
 }

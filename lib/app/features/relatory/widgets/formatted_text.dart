@@ -111,9 +111,11 @@ class _FormattedTextState extends State<FormattedText> {
     print("Response data > $resp");
     scrip.changeSelectedTeaching(newSelectedTeaching);
     setState(() {
-      scrip.teachings[newSelectedTeaching].text = resp.text;
+      scrip.teachings[newSelectedTeaching] = resp;
+      print("Gatilhos >> ${scrip.teachings[newSelectedTeaching].gatilhos?[0].teachingText.toString()}");
     });
     widget.scrips[scripIndex] = scrip;
+    setState(() {});
   }
 
   @override
@@ -139,8 +141,13 @@ class _FormattedTextState extends State<FormattedText> {
             .elementAtOrNull(anotherScrip.selectedTeaching)
             ?.gatilhos
             ?.forEach((gatilho) {
+              print("Gatilho dentro do for ${gatilho.idScrip} + ${scrip.id}");
           if (gatilho.idScrip == scrip.id) {
-            text += gatilho.teachingText;
+            print("Gatilho add > ${gatilho.teachingText}");
+            setState(() {
+              text += gatilho.teachingText;
+
+            });
           }
         });
       }
