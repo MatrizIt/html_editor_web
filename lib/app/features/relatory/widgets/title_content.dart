@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:reportpad/app/model/teaching_model.dart';
 
 class TitleContent extends StatefulWidget {
-  final Widget title;
+  final String title;
   final List<String> teachings;
   final List<InlineSpan> content;
   final bool isVisible;
@@ -33,43 +33,49 @@ class _TitleContentState extends State<TitleContent> {
     return Column(
       children: [
         Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             IconButton(
                 onPressed: widget.changeVisibility,
-                icon: Icon(widget.isVisible == true
-                    ? Icons.close_outlined
-                    : Icons.refresh_outlined,color: widget.isVisible == true ? Colors.red : Colors.blue,)),
-            widget.title,
-            DropdownButtonHideUnderline(
-              child: DropdownButton2(
-                onChanged: (selectedTeaching) {
-                  widget.changeSelectedTeaching(selectedTeaching as int);
-                },
-                selectedItemBuilder: (context) {
-                  return [
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * .10,
-                    )
-                  ];
-                },
-                items: widget.teachings.map<DropdownMenuItem>((teaching) {
-                  return DropdownMenuItem(
-                    value: widget.teachings.indexOf(teaching),
-                    child: Text(
-                      teaching,
-                      style: GoogleFonts.inter(
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
-                        color: widget.selectedTeaching ==
-                                widget.teachings.indexOf(teaching)
-                            ? Colors.blueAccent
-                            : Colors.black,
-                      ),
-                    ),
-                  );
-                }).toList(),
+                icon: Icon(
+                  widget.isVisible == true
+                      ? Icons.close_outlined
+                      : Icons.refresh_outlined,
+                  color: widget.isVisible == true ? Colors.red : Colors.blue,
+                )),
+            Text(
+              widget.title,
+              style: GoogleFonts.inter(
+                fontWeight: FontWeight.bold,
               ),
             ),
+            const SizedBox(
+              width: 20,
+            ),
+            PopupMenuButton(
+              child: const Icon(Icons.arrow_drop_down),
+              onSelected: (selectedTeaching) {
+                widget.changeSelectedTeaching(selectedTeaching as int);
+              },
+              itemBuilder: (context) =>
+                  widget.teachings.map<PopupMenuItem>((teaching) {
+                return PopupMenuItem(
+                  value: widget.teachings.indexOf(teaching),
+                  child: Text(
+                    teaching,
+                    style: GoogleFonts.inter(
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                      color: widget.selectedTeaching ==
+                              widget.teachings.indexOf(teaching)
+                          ? Colors.blueAccent
+                          : Colors.black,
+                    ),
+                  ),
+                );
+              }).toList(),
+            )
           ],
         ),
         AnimatedSwitcher(

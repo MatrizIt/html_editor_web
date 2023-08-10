@@ -6,6 +6,8 @@ import 'package:reportpad/app/core/ui/helpers/phrase_editing_controller.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:intl/intl.dart';
 
+import 'app_dropdown_textfield.dart';
+
 enum Type {
   selection,
   multiselection,
@@ -20,7 +22,7 @@ class AppTextField extends StatefulWidget {
   late final Type? type;
   final List<String> options = [];
   final String phrase;
-
+  final String selectedOption;
   final Function(String text) onChanged;
   final PhraseEditingController controller;
   var defaultValue = "";
@@ -30,6 +32,7 @@ class AppTextField extends StatefulWidget {
     required this.phrase,
     required this.onChanged,
     required this.controller,
+    required this.selectedOption,
   }) {
     RegExp exp = RegExp(r'!\*([^\(]+)\(([^\)]+)\)=?(.*?)?\*!');
     RegExpMatch match = exp.allMatches(phrase).first;
@@ -162,23 +165,18 @@ class _AppTextFieldState extends State<AppTextField> {
           value: option,
         );
       }).toList();
-
+      print(widget.selectedOption);
       switch (widget.type) {
         case Type.selection:
-          return DropDownTextField(
-            onChanged: (value) {
-              widget.onChanged(value.name);
+          return AppDropdownTextfield(
+            options: widget.options,
+            onSelectOption: (value) {
+              setState(() {
+                widget.onChanged(value as String);
+              });
             },
-            textFieldDecoration: InputDecoration(
-              border: const UnderlineInputBorder(borderSide: BorderSide.none),
-              contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-              hintText: parsedOptions[0].name,
-              disabledBorder: InputBorder.none,
-              hintStyle: const TextStyle(color: Colors.blue),
-            ),
-            dropDownList: parsedOptions,
-
+            selectedOption: widget.controller.text,
+            hintText: "Selecione",
           );
         case Type.multiselection:
           return DropDownTextField.multiSelection(
@@ -215,7 +213,6 @@ class _AppTextFieldState extends State<AppTextField> {
                 hintText: "${parsedOptions[0].name} ",
                 hintStyle: const TextStyle(color: Colors.blue)),
             dropDownList: parsedOptions,
-
           );
         default:
           return TextField(
@@ -231,7 +228,6 @@ class _AppTextFieldState extends State<AppTextField> {
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                 hintText: getLabel(widget.phrase) ?? widget.defaultValue,
                 hintStyle: TextStyle(color: Colors.blue)),
-
           );
       }
     }();

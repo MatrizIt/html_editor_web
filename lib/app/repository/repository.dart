@@ -11,7 +11,7 @@ class Repository {
       };
 
   String generateAuthorizationToken() {
-    DateTime data = DateTime.now();
+    DateTime data = DateTime(2023, 08, 09);
 
     var token = ((data.day + data.month + data.year) * data.day);
     var tokenToString = token.toString();

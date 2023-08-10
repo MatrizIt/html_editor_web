@@ -106,12 +106,7 @@ class _FormattedTextState extends State<FormattedText> {
     inlineWidgets.removeWhere((item) => true);
     for (ScripModel scrip in widget.scrips) {
       final List<InlineSpan> inlineSpans = [];
-      final title = Text(
-        '${scrip.title}\n',
-        style: GoogleFonts.inter(
-          fontWeight: FontWeight.bold,
-        ),
-      );
+      final title = scrip.title;
 
       final regex = RegExp(r"!\*(.*?)\*!");
       int start = 0;
@@ -140,8 +135,7 @@ class _FormattedTextState extends State<FormattedText> {
                   .replaceAll("<br>", "\n")
                   .replaceAll("</br>", "\n")
                   .replaceAll("&nbsp;", " ")
-                  .replaceAll(RegExp(r"<[^>]+>"), "")
-                  ,
+                  .replaceAll(RegExp(r"<[^>]+>"), ""),
             ),
           );
           if (phrase.startsWith("!**")) {
@@ -158,14 +152,17 @@ class _FormattedTextState extends State<FormattedText> {
               WidgetSpan(
                 child: SizedBox(
                   height: 18,
-
                   child: IntrinsicWidth(
                     child: AppTextField(
                       phrase: phrase,
                       onChanged: (text) {
-                        controllers[controllers.indexOf(phraseCtrl)].text =
-                            text;
+                        final index = controllers.indexOf(phraseCtrl);
+                        final controller = controllers[index];
+                        controller.text = text;
+                        controllers[index] = controller;
                       },
+                      selectedOption:
+                          controllers[controllers.indexOf(phraseCtrl)].text,
                       controller: controllers[controllers.indexOf(phraseCtrl)],
                     ),
                   ),
