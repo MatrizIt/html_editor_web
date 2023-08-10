@@ -1,15 +1,18 @@
 import 'dart:convert';
 
 class TeachingModel {
+  final int id;
   final String name;
-  final String text;
+  String text;
   TeachingModel({
+    required this.id,
     required this.name,
     required this.text,
   });
 
   Map<String, dynamic> toMap() {
     return {
+      'id': id,
       'nome': name,
       'texto': text,
     };
@@ -17,6 +20,7 @@ class TeachingModel {
 
   factory TeachingModel.fromMap(Map<String, dynamic> map) {
     return TeachingModel(
+      id: map['id'] ?? 0,
       name: map['nome'] ?? '',
       text: map['texto'] ?? '',
     );
@@ -28,5 +32,5 @@ class TeachingModel {
       TeachingModel.fromMap(json.decode(source));
 
   @override
-  String toString() => 'TeachingModel(name: $name, text: $text)';
+  String toString() => 'TeachingModel(id: $id, name: $name, text: $text)';
 }

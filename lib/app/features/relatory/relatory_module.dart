@@ -17,9 +17,12 @@ class RelatoryModule extends Module {
 
         final String title = routeArgs['Title'] ?? 'Default Title';
 
+        final String idSurvey = routeArgs['idSurvey'] ?? "0";
+
         return RelatoryPage(
           scrips: scrips,
           title: title,
+          idSurvey: idSurvey,
         );
       },
     );

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:reportpad/app/model/scrip_model.dart';
 import 'package:reportpad/app/model/survey_model.dart';
+import 'package:reportpad/app/model/teaching_model.dart';
 import 'package:reportpad/app/repository/relatory/i_relatory_repository.dart';
 import 'package:intl/intl.dart';
 
@@ -32,8 +33,12 @@ class RelatoryRepository extends IRelatoryRepository {
         .toList();
   }
 
-  // @override
-  // Future getTeachings(String scrip) async {
-  //   final response = await get("Ensinamentos?id=string&idTitulo=$scrip");
-  // }
+   @override
+   Future<TeachingModel> getTeachings(String idTeaching, String idSurvey) async {
+     final response = await get("EnsinamentosMesclados?idEnsinamento=$idTeaching&idAgendamento=$idSurvey");
+     print("Res > $response");
+     print("Response data > ${jsonDecode(response?.data)['ensinamentos'][0]}");
+
+     return TeachingModel.fromMap(jsonDecode(response?.data)['ensinamentos'][0]);
+   }
 }

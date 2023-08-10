@@ -22,6 +22,6 @@ abstract class WorklistView<T extends StatefulWidget> extends State<T> {
   Future<void> getScrips(String idSurvey, String title) async {
     final scrips = await repository.getScrips(idSurvey);
     Modular.to
-        .pushNamed('/relatory', arguments: {'Scrips': scrips, 'Title': title});
+        .pushNamed('/relatory', arguments: {'Scrips': scrips, 'Title': title, 'idSurvey': idSurvey});
   }
 }

@@ -8,7 +8,8 @@ import '../../model/scrip_model.dart';
 class RelatoryPage extends StatefulWidget {
   final List<ScripModel> scrips;
   final String title;
-  const RelatoryPage({super.key, required this.scrips, required this.title});
+  final String idSurvey;
+  const RelatoryPage({super.key, required this.scrips, required this.title, required this.idSurvey});
 
   @override
   State<RelatoryPage> createState() => _RelatoryPageState();
@@ -30,6 +31,7 @@ class _RelatoryPageState extends RelatoryView<RelatoryPage> {
         minScale: 0.5,
         maxScale: 4.0, //
         child: FormattedText(
+          idSurvey: widget.idSurvey,
           scrips: widget.scrips,
           onGeneratedText: (text) async {
             await showDialog(

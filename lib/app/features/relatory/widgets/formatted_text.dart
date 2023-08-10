@@ -7,6 +7,8 @@ import 'package:reportpad/app/features/relatory/widgets/app_text_field.dart';
 import 'package:reportpad/app/core/ui/helpers/phrase_editing_controller.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:reportpad/app/features/relatory/widgets/title_content.dart';
+import 'package:reportpad/app/model/teaching_model.dart';
+import 'package:reportpad/app/repository/relatory/i_relatory_repository.dart';
 
 import '../../../core/ui/helpers/phrase_editing_controller.dart';
 import '../../../model/scrip_model.dart';
@@ -15,10 +17,12 @@ import 'app_text_field.dart';
 class FormattedText extends StatefulWidget {
   final List<ScripModel> scrips;
   final Function(String) onGeneratedText;
+  final String idSurvey;
   FormattedText({
     super.key,
     required this.scrips,
     required this.onGeneratedText,
+    required this.idSurvey,
   });
 
   @override
@@ -28,11 +32,15 @@ class FormattedText extends StatefulWidget {
 class _FormattedTextState extends State<FormattedText> {
   final List<PhraseEditingController> controllers = [];
   final List<TitleContent> inlineWidgets = [];
+  late final IRelatoryRepository repository;
+
 
   @override
   void initState() {
     super.initState();
-    changeScripVisibility(0);
+
+    repository = Modular.get<IRelatoryRepository>();
+
   }
 
   String mountText() {
@@ -94,11 +102,22 @@ class _FormattedTextState extends State<FormattedText> {
     widget.scrips[index] = scrip;
   }
 
-  void changeSelectedTeaching(int scripIndex, int newSelectedTeaching) {
+  Future<TeachingModel> getTeaching(String idTeaching, String idSurvey) async {
+    final newTeaching = await repository.getTeachings(idTeaching,idSurvey);
+    return newTeaching;
+  }
+
+  void changeSelectedTeaching(int scripIndex, int newSelectedTeaching) async{
     print("NOVO INDEX $newSelectedTeaching da teaching $scripIndex");
     final scrip = widget.scrips[scripIndex];
+    var resp = await getTeaching(scrip.teachings[newSelectedTeaching].id.toString(),widget.idSurvey);
+    print("Response data > $resp");
     scrip.changeSelectedTeaching(newSelectedTeaching);
+    setState(() {
+      scrip.teachings[newSelectedTeaching].text = resp.text;
+    });
     widget.scrips[scripIndex] = scrip;
+
   }
 
   @override
@@ -182,6 +201,8 @@ class _FormattedTextState extends State<FormattedText> {
 
       inlineWidgets.add(
         TitleContent(
+          idSurvey: widget.idSurvey,
+          idTeaching: scrip.teachings[0].id.toString(),
           title: title,
           content: inlineSpans,
           isVisible: scrip.isVisible,

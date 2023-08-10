@@ -6,6 +6,8 @@ import 'package:reportpad/app/model/teaching_model.dart';
 import 'package:reportpad/app/repository/relatory/i_relatory_repository.dart';
 
 class TitleContent extends StatefulWidget {
+  final String idSurvey;
+  final String idTeaching;
   final String title;
   final List<String> teachings;
   final List<InlineSpan> content;
@@ -16,6 +18,8 @@ class TitleContent extends StatefulWidget {
 
   const TitleContent({
     super.key,
+    required this.idSurvey,
+    required this.idTeaching,
     required this.title,
     required this.content,
     required this.isVisible,
@@ -30,13 +34,11 @@ class TitleContent extends StatefulWidget {
 }
 
 class _TitleContentState extends State<TitleContent> {
-  late final IRelatoryRepository repository;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    repository = Modular.get<IRelatoryRepository>();
   }
 
   @override
@@ -54,10 +56,10 @@ class _TitleContentState extends State<TitleContent> {
               IconButton(
                   onPressed: widget.changeVisibility,
                   icon: Icon(
-                    widget.isVisible != true
+                    widget.isVisible == true
                         ? Icons.close_outlined
                         : Icons.refresh_outlined,
-                    color: widget.isVisible != true ? Colors.red : Colors.blue,
+                    color: widget.isVisible == true ? Colors.red : Colors.blue,
                   )),
               Text(
                 widget.title,
@@ -100,7 +102,7 @@ class _TitleContentState extends State<TitleContent> {
             duration: const Duration(
               milliseconds: 300,
             ),
-            child: widget.isVisible != true
+            child: widget.isVisible == true
                 ? RichText(
                     textAlign: TextAlign.justify,
                     text: TextSpan(

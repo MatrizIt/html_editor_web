@@ -6,7 +6,7 @@ class ScripModel {
   final String title;
   final List<TeachingModel> teachings;
   final int leading;
-  bool isVisible = false;
+  bool isVisible = true;
   int selectedTeaching = 0;
   ScripModel({
     required this.title,
