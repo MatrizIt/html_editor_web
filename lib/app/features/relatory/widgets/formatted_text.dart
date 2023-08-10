@@ -131,6 +131,19 @@ class _FormattedTextState extends State<FormattedText> {
       } else if (scrip.teachings.isEmpty) {
         text = "Ocorreu um Erro";
       }
+      final scripsAux = widget.scrips.map<ScripModel?>((s) {
+        if (s != scrip) return s;
+      }).toList();
+      for (ScripModel? anotherScrip in scripsAux) {
+        anotherScrip?.teachings
+            .elementAtOrNull(anotherScrip.selectedTeaching)
+            ?.gatilhos
+            ?.forEach((gatilho) {
+          if (gatilho.idScrip == scrip.id) {
+            text += gatilho.teachingText;
+          }
+        });
+      }
       for (final match in regex.allMatches(
         text.replaceAll("</br>", "\n"),
       )) {

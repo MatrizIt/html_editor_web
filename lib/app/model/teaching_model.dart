@@ -1,13 +1,17 @@
 import 'dart:convert';
 
+import 'package:reportpad/app/model/gatilho_model.dart';
+
 class TeachingModel {
   final int id;
   final String name;
   String text;
+  final List<GatilhoModel>? gatilhos;
   TeachingModel({
     required this.id,
     required this.name,
     required this.text,
+    required this.gatilhos,
   });
 
   Map<String, dynamic> toMap() {
@@ -23,6 +27,11 @@ class TeachingModel {
       id: map['id'] ?? 0,
       name: map['nome'] ?? '',
       text: map['texto'] ?? '',
+      gatilhos: map['gatilhos'] != null
+          ? (map['gatilhos'] as List).map<GatilhoModel>((gatilho) {
+              return GatilhoModel.fromMap(gatilho);
+            }).toList()
+          : null,
     );
   }
 

@@ -3,12 +3,14 @@ import 'dart:convert';
 import 'package:reportpad/app/model/teaching_model.dart';
 
 class ScripModel {
+  final int id;
   final String title;
   final List<TeachingModel> teachings;
   final int leading;
   bool isVisible = true;
   int selectedTeaching = 0;
   ScripModel({
+    required this.id,
     required this.title,
     required this.teachings,
     required this.leading,
@@ -26,6 +28,7 @@ class ScripModel {
 
   Map<String, dynamic> toMap() {
     return {
+      'id': id,
       'titulo': {
         'titulo': title,
       },
@@ -35,6 +38,7 @@ class ScripModel {
 
   factory ScripModel.fromMap(Map<String, dynamic> map) {
     return ScripModel(
+      id: map["id"] ?? 0,
       title: map['titulo']['titulo'] ?? '',
       teachings: List<TeachingModel>.from(
         map['ensinamentos']
