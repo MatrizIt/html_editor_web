@@ -34,10 +34,8 @@ class TitleContent extends StatefulWidget {
 }
 
 class _TitleContentState extends State<TitleContent> {
-
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
   }
 

@@ -21,7 +21,7 @@ class RelatoryRepository extends IRelatoryRepository {
   }
 
   String getDatetime() {
-    return DateFormat("yyyy-MM-dd").format(DateTime.parse("2023-08-06"));
+    return DateFormat("yyyy-MM-dd").format(DateTime.now());
   }
 
   @override
@@ -33,12 +33,13 @@ class RelatoryRepository extends IRelatoryRepository {
         .toList();
   }
 
-   @override
-   Future<TeachingModel> getTeachings(String idTeaching, String idSurvey) async {
-     final response = await get("EnsinamentosMesclados?idEnsinamento=$idTeaching&idAgendamento=$idSurvey");
-     print("Res > $response");
-     print("Response data > ${jsonDecode(response?.data)['ensinamentos'][0]}");
+  @override
+  Future<TeachingModel> getTeachings(String idTeaching, String idSurvey) async {
+    final response = await get(
+        "EnsinamentosMesclados?idEnsinamento=$idTeaching&idAgendamento=$idSurvey");
+    print("Res > $response");
+    print("Response data > ${jsonDecode(response?.data)['ensinamentos'][0]}");
 
-     return TeachingModel.fromMap(jsonDecode(response?.data)['ensinamentos'][0]);
-   }
+    return TeachingModel.fromMap(jsonDecode(response?.data)['ensinamentos'][0]);
+  }
 }

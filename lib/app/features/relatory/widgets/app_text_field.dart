@@ -16,6 +16,7 @@ enum Type {
   cpf,
   currency,
   number,
+  error,
 }
 
 class AppTextField extends StatefulWidget {
@@ -35,8 +36,15 @@ class AppTextField extends StatefulWidget {
     required this.selectedOption,
   }) {
     RegExp exp = RegExp(r'!\*([^\(]+)\(([^\)]+)\)=?(.*?)?\*!');
-    RegExpMatch match = exp.allMatches(phrase).first;
-    String typeRecognized = match.group(1) ?? "";
+    RegExpMatch? match;
+    String typeRecognized;
+    try {
+      match = exp.allMatches(phrase).first;
+      typeRecognized = match.group(1)!;
+    } catch (e) {
+      match = null;
+      typeRecognized = "";
+    }
 
     switch (typeRecognized) {
       case 'multiselect':
@@ -59,6 +67,9 @@ class AppTextField extends StatefulWidget {
         type = Type.date;
         defaultValue = "01/01/2000";
         break;
+      case "":
+        type = Type.error;
+        break;
       case 'text':
       default:
         type = Type.text;
@@ -66,7 +77,7 @@ class AppTextField extends StatefulWidget {
         break;
     }
     if ([Type.multiselection, Type.selection].contains(type)) {
-      match.group(2)!.split(",").forEach(
+      match?.group(2)!.split(",").forEach(
         (option) {
           options.add(option);
         },
@@ -156,7 +167,7 @@ class _AppTextFieldState extends State<AppTextField> {
     return _selectInputType();
   }
 
-  StatefulWidget _selectInputType() {
+  Widget _selectInputType() {
     return <Widget>() {
       final List<DropDownValueModel> parsedOptions =
           widget.options.map<DropDownValueModel>((option) {
@@ -165,7 +176,6 @@ class _AppTextFieldState extends State<AppTextField> {
           value: option,
         );
       }).toList();
-      print(widget.selectedOption);
       switch (widget.type) {
         case Type.selection:
           return AppDropdownTextfield(
@@ -214,6 +224,8 @@ class _AppTextFieldState extends State<AppTextField> {
                 hintStyle: const TextStyle(color: Colors.blue)),
             dropDownList: parsedOptions,
           );
+        case Type.error:
+          return Text(widget.phrase);
         default:
           return TextField(
             readOnly: widget.type == Type.date,

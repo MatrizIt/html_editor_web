@@ -34,13 +34,10 @@ class _FormattedTextState extends State<FormattedText> {
   final List<TitleContent> inlineWidgets = [];
   late final IRelatoryRepository repository;
 
-
   @override
   void initState() {
     super.initState();
-
     repository = Modular.get<IRelatoryRepository>();
-
   }
 
   String mountText() {
@@ -51,7 +48,6 @@ class _FormattedTextState extends State<FormattedText> {
       if (scrip.teachings.isNotEmpty) {
         text += scrip.selectedTeachingText;
       }
-      text += "Ocorreu um erro";
       for (int i = 0; i <= scrip.leading; i++) {
         text += "</br>";
       }
@@ -103,21 +99,21 @@ class _FormattedTextState extends State<FormattedText> {
   }
 
   Future<TeachingModel> getTeaching(String idTeaching, String idSurvey) async {
-    final newTeaching = await repository.getTeachings(idTeaching,idSurvey);
+    final newTeaching = await repository.getTeachings(idTeaching, idSurvey);
     return newTeaching;
   }
 
-  void changeSelectedTeaching(int scripIndex, int newSelectedTeaching) async{
+  void changeSelectedTeaching(int scripIndex, int newSelectedTeaching) async {
     print("NOVO INDEX $newSelectedTeaching da teaching $scripIndex");
     final scrip = widget.scrips[scripIndex];
-    var resp = await getTeaching(scrip.teachings[newSelectedTeaching].id.toString(),widget.idSurvey);
+    var resp = await getTeaching(
+        scrip.teachings[newSelectedTeaching].id.toString(), widget.idSurvey);
     print("Response data > $resp");
     scrip.changeSelectedTeaching(newSelectedTeaching);
     setState(() {
       scrip.teachings[newSelectedTeaching].text = resp.text;
     });
     widget.scrips[scripIndex] = scrip;
-
   }
 
   @override
@@ -158,15 +154,12 @@ class _FormattedTextState extends State<FormattedText> {
             ),
           );
           if (phrase.startsWith("!**")) {
+            //print(phrase);
             inlineSpans.add(
-              TextSpan(
-                text: phrase
-                    .replaceAll("!", "")
-                    .replaceAll("*", "")
-                    .replaceAll("=", ""),
-              ),
+              TextSpan(text: phrase),
             );
           } else {
+            print(phrase);
             inlineSpans.add(
               WidgetSpan(
                 child: SizedBox(
@@ -189,6 +182,7 @@ class _FormattedTextState extends State<FormattedText> {
               ),
             );
           }
+
           start = phraseEnd;
         }
       }
@@ -198,34 +192,38 @@ class _FormattedTextState extends State<FormattedText> {
               "${text.substring(start).replaceAll(RegExp(r"<[^>]+>"), "").replaceAll("&nbsp;", " ")}\n\n",
         ),
       );
-
-      inlineWidgets.add(
-        TitleContent(
-          idSurvey: widget.idSurvey,
-          idTeaching: scrip.teachings[0].id.toString(),
-          title: title,
-          content: inlineSpans,
-          isVisible: scrip.isVisible,
-          selectedTeaching: scrip.selectedTeaching,
-          changeVisibility: () {
-            setState(() {
-              changeScripVisibility(widget.scrips.indexOf(scrip));
-            });
-          },
-          teachings:
-              scrip.teachings.map<String>((teaching) => teaching.name).toList(),
-          changeSelectedTeaching: (selectedTeaching) {
-            setState(() {
-              changeSelectedTeaching(
-                  widget.scrips.indexOf(scrip), selectedTeaching);
-            });
-          },
-        ),
-      );
+      try {
+        inlineWidgets.add(
+          TitleContent(
+            idSurvey: widget.idSurvey,
+            idTeaching: (scrip.teachings.firstOrNull?.id).toString(),
+            title: title,
+            content: inlineSpans,
+            isVisible: scrip.isVisible,
+            selectedTeaching: scrip.selectedTeaching,
+            changeVisibility: () {
+              setState(() {
+                changeScripVisibility(widget.scrips.indexOf(scrip));
+              });
+            },
+            teachings: scrip.teachings
+                .map<String>((teaching) => teaching.name)
+                .toList(),
+            changeSelectedTeaching: (selectedTeaching) {
+              setState(() {
+                changeSelectedTeaching(
+                    widget.scrips.indexOf(scrip), selectedTeaching);
+              });
+            },
+          ),
+        );
+      } catch (e, s) {
+        print("ERROR: $e, STACKTRACE: $s");
+      }
     }
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        backgroundColor: Color.fromRGBO(0, 160, 0, 100),
+        backgroundColor: const Color.fromRGBO(0, 160, 0, 100),
         onPressed: () {
           generateText();
         },

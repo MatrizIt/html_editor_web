@@ -12,7 +12,7 @@ abstract class WorklistView<T extends StatefulWidget> extends State<T> {
     setState(() {
       isLoading = true;
     });
-    worklist = await repository.getSurveys("5511985858505");
+    worklist = await repository.getSurveys(phone);
 
     setState(() {
       isLoading = false;
@@ -21,7 +21,7 @@ abstract class WorklistView<T extends StatefulWidget> extends State<T> {
 
   Future<void> getScrips(String idSurvey, String title) async {
     final scrips = await repository.getScrips(idSurvey);
-    Modular.to
-        .pushNamed('/relatory', arguments: {'Scrips': scrips, 'Title': title, 'idSurvey': idSurvey});
+    Modular.to.pushNamed('/relatory',
+        arguments: {'Scrips': scrips, 'Title': title, 'idSurvey': idSurvey});
   }
 }
