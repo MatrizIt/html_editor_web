@@ -8,7 +8,7 @@ class ScripModel {
   final List<TeachingModel> teachings;
   final int leading;
   bool isVisible = true;
-  int selectedTeaching = 0;
+  List<int> selectedTeachings = [0];
   ScripModel({
     required this.id,
     required this.title,
@@ -16,14 +16,21 @@ class ScripModel {
     required this.leading,
   });
 
-  String get selectedTeachingText => teachings[selectedTeaching].text;
+  String getTeachingText(int index) {
+    return teachings[index].text;
+  }
 
   changeVisibility() {
     isVisible = !isVisible;
   }
 
   changeSelectedTeaching(int index) {
-    selectedTeaching = index;
+    if (selectedTeachings.contains(index)) {
+      selectedTeachings.remove(index);
+    } else {
+      selectedTeachings.add(index);
+    }
+    selectedTeachings.sort();
   }
 
   Map<String, dynamic> toMap() {

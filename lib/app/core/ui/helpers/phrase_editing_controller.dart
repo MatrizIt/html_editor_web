@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 
 class PhraseEditingController extends TextEditingController {
+  final int teachingId;
   final String phrase;
   String? defaultValue;
 
   PhraseEditingController({
+    required this.teachingId,
     required this.phrase,
   }) {
     if (phrase.contains("select") || phrase.contains("multiselect")) {

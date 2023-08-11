@@ -31,7 +31,7 @@ class FormattedText extends StatefulWidget {
 
 class _FormattedTextState extends State<FormattedText> {
   final List<PhraseEditingController> controllers = [];
-  final List<TitleContent> inlineWidgets = [];
+  List<TitleContent> inlineWidgets = [];
   late final IRelatoryRepository repository;
 
   @override
@@ -46,12 +46,17 @@ class _FormattedTextState extends State<FormattedText> {
     for (var scrip in widget.scrips) {
       text += "<b>${scrip.title}</b>";
       if (scrip.teachings.isNotEmpty) {
-        text += scrip.selectedTeachingText;
+        for (int selectedTeaching in scrip.selectedTeachings) {
+          print(
+              "TEACHING: $selectedTeaching, Texto: ${scrip.getTeachingText(selectedTeaching)}");
+          text += "${scrip.getTeachingText(selectedTeaching)}</br>";
+        }
       }
       for (int i = 0; i <= scrip.leading; i++) {
         text += "</br>";
       }
     }
+    print("TEXTO: $text");
     return text;
   }
 
@@ -107,111 +112,131 @@ class _FormattedTextState extends State<FormattedText> {
     print("NOVO INDEX $newSelectedTeaching da teaching $scripIndex");
     final scrip = widget.scrips[scripIndex];
     var resp = await getTeaching(
-        scrip.teachings[newSelectedTeaching].id.toString(), widget.idSurvey);
+      scrip.teachings[newSelectedTeaching].id.toString(),
+      widget.idSurvey,
+    );
     print("Response data > $resp");
     scrip.changeSelectedTeaching(newSelectedTeaching);
-    setState(() {
-      scrip.teachings[newSelectedTeaching] = resp;
-      print("Gatilhos >> ${scrip.teachings[newSelectedTeaching].gatilhos?[0].teachingText.toString()}");
-    });
+    scrip.teachings[newSelectedTeaching] = resp;
     widget.scrips[scripIndex] = scrip;
     setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    inlineWidgets.removeWhere((item) => true);
+    inlineWidgets = [];
     for (ScripModel scrip in widget.scrips) {
       final List<InlineSpan> inlineSpans = [];
       final title = scrip.title;
+      for (int selectedTeaching in scrip.selectedTeachings) {
+        print("Recarregando");
+        final regex = RegExp(r"!\*(.*?)\*!");
+        int start = 0;
+        var text = "";
+        if (scrip.teachings.isNotEmpty) {
+          text = scrip.getTeachingText(selectedTeaching);
+          print("SCRIP TITLE: ${scrip.title}");
+          print("SCRIP TEXT: ${scrip.getTeachingText(selectedTeaching)}");
+        } else if (scrip.teachings.isEmpty) {
+          text = "Ocorreu um Erro";
+        }
+        final scripsAux = widget.scrips.map<ScripModel?>((s) {
+          if (s != scrip) return s;
+          return null;
+        }).toList();
+        for (ScripModel? anotherScrip in scripsAux) {
+          anotherScrip?.teachings.forEach((teaching) {
+            if (anotherScrip.selectedTeachings
+                .contains(anotherScrip.teachings.indexOf(teaching))) {
+              teaching.gatilhos?.forEach((gatilho) {
+                print("Gatilho dentro do for ${gatilho.idScrip} + ${scrip.id}");
+                if (gatilho.idScrip == scrip.id) {
+                  print("Gatilho add > ${gatilho.teachingText}");
+                  setState(() {
+                    text += gatilho.teachingText;
+                  });
+                }
+              });
+            }
+          });
+        }
+        for (final match in regex.allMatches(
+          text.replaceAll("</br>", "\n"),
+        )) {
+          final phrase = match.group(0);
+          final phraseStart = match.start;
+          final phraseEnd = match.end;
 
-      final regex = RegExp(r"!\*(.*?)\*!");
-      int start = 0;
-      var text = "";
-      if (scrip.teachings.isNotEmpty) {
-        text = scrip.selectedTeachingText;
-      } else if (scrip.teachings.isEmpty) {
-        text = "Ocorreu um Erro";
-      }
-      final scripsAux = widget.scrips.map<ScripModel?>((s) {
-        if (s != scrip) return s;
-      }).toList();
-      for (ScripModel? anotherScrip in scripsAux) {
-        anotherScrip?.teachings
-            .elementAtOrNull(anotherScrip.selectedTeaching)
-            ?.gatilhos
-            ?.forEach((gatilho) {
-              print("Gatilho dentro do for ${gatilho.idScrip} + ${scrip.id}");
-          if (gatilho.idScrip == scrip.id) {
-            print("Gatilho add > ${gatilho.teachingText}");
-            setState(() {
-              text += gatilho.teachingText;
-
-            });
-          }
-        });
-      }
-      for (final match in regex.allMatches(
-        text.replaceAll("</br>", "\n"),
-      )) {
-        final phrase = match.group(0);
-        final phraseStart = match.start;
-        final phraseEnd = match.end;
-
-        if (phrase != null) {
-          final phraseCtrl = PhraseEditingController(
-            phrase: phrase,
-          );
-          controllers.add(phraseCtrl);
-          inlineSpans.add(
-            TextSpan(
-              text: text
-                  .substring(start, phraseStart)
-                  .replaceAll("<br>", "\n")
-                  .replaceAll("</br>", "\n")
-                  .replaceAll("&nbsp;", " ")
-                  .replaceAll(RegExp(r"<[^>]+>"), ""),
-            ),
-          );
-          if (phrase.startsWith("!**")) {
-            //print(phrase);
+          if (phrase != null) {
+            int? exists;
+            PhraseEditingController phraseCtrl;
+            for (PhraseEditingController phraseCtrl in controllers) {
+              if (phraseCtrl.phrase == phrase &&
+                  phraseCtrl.teachingId ==
+                      scrip.teachings[selectedTeaching].id) {
+                exists = controllers.indexOf(phraseCtrl);
+              }
+            }
+            if (exists == null) {
+              phraseCtrl = PhraseEditingController(
+                teachingId: scrip.teachings[selectedTeaching].id,
+                phrase: phrase,
+              );
+              controllers.add(phraseCtrl);
+            } else {
+              phraseCtrl = controllers[exists];
+            }
             inlineSpans.add(
-              TextSpan(text: phrase),
+              TextSpan(
+                text: text
+                    .substring(start, phraseStart)
+                    .replaceAll("<br>", "\n")
+                    .replaceAll("</br>", "\n")
+                    .replaceAll("&nbsp;", " ")
+                    .replaceAll(RegExp(r"<[^>]+>"), ""),
+              ),
             );
-          } else {
-            print(phrase);
-            inlineSpans.add(
-              WidgetSpan(
-                child: SizedBox(
-                  height: 18,
-                  child: IntrinsicWidth(
-                    child: AppTextField(
-                      phrase: phrase,
-                      onChanged: (text) {
-                        final index = controllers.indexOf(phraseCtrl);
-                        final controller = controllers[index];
-                        controller.text = text;
-                        controllers[index] = controller;
-                      },
-                      selectedOption:
-                          controllers[controllers.indexOf(phraseCtrl)].text,
-                      controller: controllers[controllers.indexOf(phraseCtrl)],
+            if (phrase.startsWith("!**")) {
+              //print(phrase);
+              inlineSpans.add(
+                TextSpan(text: phrase),
+              );
+            } else {
+              print(phrase);
+              inlineSpans.add(
+                WidgetSpan(
+                  child: SizedBox(
+                    height: 18,
+                    child: IntrinsicWidth(
+                      child: AppTextField(
+                        phrase: phrase,
+                        onChanged: (text) {
+                          final index = controllers.indexOf(phraseCtrl);
+                          final controller = controllers[index];
+                          controller.text = text;
+                          controllers[index] = controller;
+                        },
+                        selectedOption:
+                            controllers[controllers.indexOf(phraseCtrl)].text,
+                        controller:
+                            controllers[controllers.indexOf(phraseCtrl)],
+                      ),
                     ),
                   ),
                 ),
-              ),
-            );
-          }
+              );
+            }
 
-          start = phraseEnd;
+            start = phraseEnd;
+          }
         }
+        inlineSpans.add(
+          TextSpan(
+            text:
+                "${text.substring(start).replaceAll(RegExp(r"<[^>]+>"), "").replaceAll("&nbsp;", " ")}\n\n",
+          ),
+        );
       }
-      inlineSpans.add(
-        TextSpan(
-          text:
-              "${text.substring(start).replaceAll(RegExp(r"<[^>]+>"), "").replaceAll("&nbsp;", " ")}\n\n",
-        ),
-      );
       try {
         inlineWidgets.add(
           TitleContent(
@@ -220,7 +245,7 @@ class _FormattedTextState extends State<FormattedText> {
             title: title,
             content: inlineSpans,
             isVisible: scrip.isVisible,
-            selectedTeaching: scrip.selectedTeaching,
+            selectedTeachings: scrip.selectedTeachings,
             changeVisibility: () {
               setState(() {
                 changeScripVisibility(widget.scrips.indexOf(scrip));

@@ -235,11 +235,14 @@ class _AppTextFieldState extends State<AppTextField> {
             keyboardType: setKeyboardType(),
             controller: widget.controller,
             decoration: InputDecoration(
-                border: const UnderlineInputBorder(borderSide: BorderSide.none),
-                contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                hintText: getLabel(widget.phrase) ?? widget.defaultValue,
-                hintStyle: TextStyle(color: Colors.blue)),
+              border: const UnderlineInputBorder(borderSide: BorderSide.none),
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+              hintText: getLabel(widget.phrase) ?? widget.defaultValue,
+              hintStyle: TextStyle(
+                color: Colors.blue,
+              ),
+            ),
           );
       }
     }();

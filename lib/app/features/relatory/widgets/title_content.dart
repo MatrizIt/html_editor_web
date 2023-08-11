@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:reportpad/app/features/relatory/widgets/app_dropdown_multiselect.dart';
 import 'package:reportpad/app/features/relatory/widgets/app_text_field.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 
@@ -14,7 +15,7 @@ class TitleContent extends StatefulWidget {
   final List<InlineSpan> content;
   final bool isVisible;
   final VoidCallback changeVisibility;
-  final int selectedTeaching;
+  final List<int> selectedTeachings;
   final Function(int selectedTeaching) changeSelectedTeaching;
 
   const TitleContent({
@@ -24,7 +25,7 @@ class TitleContent extends StatefulWidget {
     required this.title,
     required this.content,
     required this.isVisible,
-    required this.selectedTeaching,
+    required this.selectedTeachings,
     required this.changeVisibility,
     required this.teachings,
     required this.changeSelectedTeaching,
@@ -35,16 +36,21 @@ class TitleContent extends StatefulWidget {
 }
 
 class _TitleContentState extends State<TitleContent> {
+  stt.SpeechToText speech = stt.SpeechToText();
+  StreamController<bool> atualizaIconMic = StreamController<bool>.broadcast();
+  final TextEditingController _controllerText =
+      TextEditingController(text: "Olá Mundo");
+  bool speechEnabled = false;
+  bool isListening = false;
+
   @override
   void initState() {
     super.initState();
+    _initSpeech();
   }
 
   @override
   Widget build(BuildContext context) {
-    StreamController<bool> atualizaIconMic = StreamController<bool>.broadcast();
-    final TextEditingController _controllerText = TextEditingController();
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.center,
@@ -81,16 +87,27 @@ class _TitleContentState extends State<TitleContent> {
                     widget.teachings.map<PopupMenuItem>((teaching) {
                   return PopupMenuItem(
                     value: widget.teachings.indexOf(teaching),
-                    child: Text(
-                      teaching,
-                      style: GoogleFonts.inter(
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
-                        color: widget.selectedTeaching ==
-                                widget.teachings.indexOf(teaching)
-                            ? Colors.blueAccent
-                            : Colors.black,
-                      ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          widget.selectedTeachings
+                                  .contains(widget.teachings.indexOf(teaching))
+                              ? Icons.check_box
+                              : Icons.square_outlined,
+                          color: Colors.black,
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Text(
+                          teaching,
+                          style: GoogleFonts.inter(
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ],
                     ),
                   );
                 }).toList(),
@@ -124,53 +141,65 @@ class _TitleContentState extends State<TitleContent> {
           child: Row(
             children: [
               IconButton(
-                onPressed: () async {
-                  stt.SpeechToText speech = stt.SpeechToText();
-
-                  bool available = await speech.initialize(
-                      onStatus: (status) {
-                        log(status);
-                      },
-                      onError: (error) {
-                        log(error.toString());
-                      },
-                      debugLogging: true);
-
-                  if (available) {
-                    atualizaIconMic.add(speech.isListening);
-
-                    speech.listen(
-                      onResult: (result) {
-                        _controllerText.text = result.recognizedWords;
-                      },
-                    );
-
-                    atualizaIconMic.add(speech.isListening);
-                  } else {
-                    log("The user has denied the use of speech recognition.");
-                  }
-                },
+                onPressed: listen,
                 icon: StreamBuilder<bool>(
                   stream: atualizaIconMic.stream,
                   builder: (context, snapshot) {
                     return Icon(
                       Icons.mic,
-                      color: snapshot.data == false ? Colors.red : Colors.black,
+                      color: isListening == true ? Colors.red : Colors.black,
                     );
                   },
                 ),
               ),
-              Container(
+              SizedBox(
                 width: 200,
-                  child: TextField(
-                controller: _controllerText, onChanged: (value){
-                  
-                  },
-              ))
+                child: TextField(
+                  controller: _controllerText,
+                  onChanged: (value) {},
+                ),
+              ),
             ],
           ),
         ),
       ],
     );
+  }
+
+  Future _initSpeech() async {
+    speechEnabled = await speech.initialize(
+      onStatus: (status) {
+        print("STATUS: $status");
+      },
+      onError: (error) {
+        log(error.toString());
+      },
+      debugLogging: true,
+    );
+  }
+
+  Future<void> listen() async {
+    if (speech.isNotListening) {
+      if (speechEnabled) {
+        await speech.listen(
+          onResult: (result) {
+            print("RESULTADO: ${result.recognizedWords}");
+            setState(() {
+              _controllerText.text = result.recognizedWords;
+            });
+          },
+        );
+        print("IS LISTENING: ${speech.isListening}");
+        isListening = speech.isListening;
+        setState(() {});
+      } else {
+        log("The user has denied the use of speech recognition.");
+      }
+    } else {
+      await speech.stop();
+      print("IS LISTENING: ${speech.isListening}");
+      isListening = speech.isListening;
+      setState(() {});
+    }
   }
 }
