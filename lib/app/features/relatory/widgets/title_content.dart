@@ -39,9 +39,10 @@ class _TitleContentState extends State<TitleContent> {
   stt.SpeechToText speech = stt.SpeechToText();
   StreamController<bool> atualizaIconMic = StreamController<bool>.broadcast();
   final TextEditingController _controllerText =
-      TextEditingController(text: "Olá Mundo");
+      TextEditingController();
   bool speechEnabled = false;
   bool isListening = false;
+  FocusNode _focusNode = FocusNode();
 
   @override
   void initState() {
@@ -136,8 +137,8 @@ class _TitleContentState extends State<TitleContent> {
                 : const SizedBox.shrink(),
           ),
         ),
-        Transform(
-          transform: Matrix4.translationValues(-15.0, -45.0, 0.0),
+        widget.isVisible == true ? Transform(
+          transform:  Matrix4.translationValues(-15.0, -45.0, 0.0),
           child: Row(
             children: [
               IconButton(
@@ -153,15 +154,20 @@ class _TitleContentState extends State<TitleContent> {
                 ),
               ),
               SizedBox(
-                width: 200,
+                width: 150,
                 child: TextField(
                   controller: _controllerText,
+                  focusNode: _focusNode,
                   onChanged: (value) {},
+                  decoration: const InputDecoration(
+                    border: InputBorder.none,
+                    labelText: '...',
+                  ),
                 ),
               ),
             ],
           ),
-        ),
+        ) : const SizedBox.shrink(),
       ],
     );
   }
