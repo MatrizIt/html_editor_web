@@ -1,9 +1,10 @@
-import 'package:dropdown_button2/dropdown_button2.dart';
+import 'dart:async';
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
-import 'package:flutter_modular/flutter_modular.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:reportpad/app/model/teaching_model.dart';
-import 'package:reportpad/app/repository/relatory/i_relatory_repository.dart';
+import 'package:reportpad/app/features/relatory/widgets/app_text_field.dart';
+import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 class TitleContent extends StatefulWidget {
   final String idSurvey;
@@ -41,6 +42,9 @@ class _TitleContentState extends State<TitleContent> {
 
   @override
   Widget build(BuildContext context) {
+    StreamController<bool> atualizaIconMic = StreamController<bool>.broadcast();
+    final TextEditingController _controllerText = TextEditingController();
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.center,
@@ -90,7 +94,7 @@ class _TitleContentState extends State<TitleContent> {
                     ),
                   );
                 }).toList(),
-              )
+              ),
             ],
           ),
         ),
@@ -113,6 +117,57 @@ class _TitleContentState extends State<TitleContent> {
                     ),
                   )
                 : const SizedBox.shrink(),
+          ),
+        ),
+        Transform(
+          transform: Matrix4.translationValues(-15.0, -45.0, 0.0),
+          child: Row(
+            children: [
+              IconButton(
+                onPressed: () async {
+                  stt.SpeechToText speech = stt.SpeechToText();
+
+                  bool available = await speech.initialize(
+                      onStatus: (status) {
+                        log(status);
+                      },
+                      onError: (error) {
+                        log(error.toString());
+                      },
+                      debugLogging: true);
+
+                  if (available) {
+                    atualizaIconMic.add(speech.isListening);
+
+                    speech.listen(
+                      onResult: (result) {
+                        _controllerText.text = result.recognizedWords;
+                      },
+                    );
+
+                    atualizaIconMic.add(speech.isListening);
+                  } else {
+                    log("The user has denied the use of speech recognition.");
+                  }
+                },
+                icon: StreamBuilder<bool>(
+                  stream: atualizaIconMic.stream,
+                  builder: (context, snapshot) {
+                    return Icon(
+                      Icons.mic,
+                      color: snapshot.data == false ? Colors.red : Colors.black,
+                    );
+                  },
+                ),
+              ),
+              Container(
+                width: 200,
+                  child: TextField(
+                controller: _controllerText, onChanged: (value){
+                  
+                  },
+              ))
+            ],
           ),
         ),
       ],
