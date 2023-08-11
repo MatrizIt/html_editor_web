@@ -1,24 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:reportpad/app/core/ui/helpers/pdf_helper.dart';
 import 'package:reportpad/app/features/relatory/widgets/app_text_field.dart';
 import 'package:reportpad/app/core/ui/helpers/phrase_editing_controller.dart';
-import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:reportpad/app/features/relatory/widgets/title_content.dart';
 import 'package:reportpad/app/model/teaching_model.dart';
 import 'package:reportpad/app/repository/relatory/i_relatory_repository.dart';
-
-import '../../../core/ui/helpers/phrase_editing_controller.dart';
 import '../../../model/scrip_model.dart';
-import 'app_text_field.dart';
 
 class FormattedText extends StatefulWidget {
   final List<ScripModel> scrips;
   final Function(String) onGeneratedText;
   final String idSurvey;
-  FormattedText({
+  const FormattedText({
     super.key,
     required this.scrips,
     required this.onGeneratedText,
@@ -52,6 +47,25 @@ class _FormattedTextState extends State<FormattedText> {
           text += "${scrip.getTeachingText(selectedTeaching)}</br>";
         }
       }
+      final scripsAux = widget.scrips.map<ScripModel?>((s) {
+        if (s != scrip) return s;
+        return null;
+      }).toList();
+      for (ScripModel? anotherScrip in scripsAux) {
+        anotherScrip?.teachings.forEach((teaching) {
+          if (anotherScrip.selectedTeachings
+              .contains(anotherScrip.teachings.indexOf(teaching))) {
+            teaching.gatilhos?.forEach((gatilho) {
+              print("Gatilho dentro do for ${gatilho.idScrip} + ${scrip.id}");
+              if (gatilho.idScrip == scrip.id) {
+                print("Gatilho add > ${gatilho.teachingText}");
+                text += "\n" + gatilho.teachingText;
+                print("TEXTO CONTAINS: ${text.contains(gatilho.teachingText)}");
+              }
+            });
+          }
+        });
+      }
       for (int i = 0; i <= scrip.leading; i++) {
         text += "</br>";
       }
@@ -66,7 +80,9 @@ class _FormattedTextState extends State<FormattedText> {
     for (ScripModel scrip in widget.scrips) {
       if (!scrip.isVisible) {
         text = text.replaceAll(scrip.title, "");
-        text = text.replaceAll(scrip.teachings[0].text, "");
+        for (int selectedTeaching in scrip.selectedTeachings) {
+          text = text.replaceAll(scrip.teachings[selectedTeaching].text, "");
+        }
       }
     }
 
@@ -153,7 +169,7 @@ class _FormattedTextState extends State<FormattedText> {
                 if (gatilho.idScrip == scrip.id) {
                   print("Gatilho add > ${gatilho.teachingText}");
                   setState(() {
-                    text += gatilho.teachingText;
+                    text += "\n" + gatilho.teachingText;
                   });
                 }
               });
