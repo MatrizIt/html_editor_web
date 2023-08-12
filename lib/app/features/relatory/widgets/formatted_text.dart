@@ -293,12 +293,18 @@ class _FormattedTextState extends State<FormattedText> {
           color: Colors.white,
         ),
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 25),
-            child: Column(
-              children: inlineWidgets,
-            )),
+      body: GestureDetector(
+        onTap: () {
+          FocusScope.of(context).requestFocus(FocusNode());
+        },
+        child: SingleChildScrollView(
+          child: Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 20.0, vertical: 25),
+              child: Column(
+                children: inlineWidgets,
+              )),
+        ),
       ),
     );
   }
