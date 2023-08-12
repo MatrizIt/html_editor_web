@@ -3,8 +3,6 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:reportpad/app/features/relatory/widgets/app_dropdown_multiselect.dart';
-import 'package:reportpad/app/features/relatory/widgets/app_text_field.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 class TitleContent extends StatefulWidget {
@@ -17,8 +15,9 @@ class TitleContent extends StatefulWidget {
   final VoidCallback changeVisibility;
   final List<int> selectedTeachings;
   final Function(int selectedTeaching) changeSelectedTeaching;
+  String textFinal;
 
-  const TitleContent({
+   TitleContent({
     super.key,
     required this.idSurvey,
     required this.idTeaching,
@@ -29,6 +28,7 @@ class TitleContent extends StatefulWidget {
     required this.changeVisibility,
     required this.teachings,
     required this.changeSelectedTeaching,
+    required this.textFinal,
   });
 
   @override
@@ -38,8 +38,7 @@ class TitleContent extends StatefulWidget {
 class _TitleContentState extends State<TitleContent> {
   stt.SpeechToText speech = stt.SpeechToText();
   StreamController<bool> atualizaIconMic = StreamController<bool>.broadcast();
-  final TextEditingController _controllerText =
-      TextEditingController();
+  final TextEditingController _controllerText = TextEditingController();
   bool speechEnabled = false;
   bool isListening = false;
   FocusNode _focusNode = FocusNode();
@@ -137,37 +136,49 @@ class _TitleContentState extends State<TitleContent> {
                 : const SizedBox.shrink(),
           ),
         ),
-        widget.isVisible == true ? Transform(
-          transform:  Matrix4.translationValues(-15.0, -45.0, 0.0),
-          child: Row(
-            children: [
-              IconButton(
-                onPressed: listen,
-                icon: StreamBuilder<bool>(
-                  stream: atualizaIconMic.stream,
-                  builder: (context, snapshot) {
-                    return Icon(
-                      Icons.mic,
-                      color: isListening == true ? Colors.red : Colors.black,
-                    );
-                  },
+        widget.isVisible == true
+            ? Transform(
+                transform: Matrix4.translationValues(-15.0, -45.0, 0.0),
+                child: Row(
+                  children: [
+                    IconButton(
+                      onPressed: listen,
+                      icon: StreamBuilder<bool>(
+                        stream: atualizaIconMic.stream,
+                        builder: (context, snapshot) {
+                          return Icon(
+                            Icons.mic,
+                            color:
+                                isListening == true ? Colors.red : Colors.black,
+                          );
+                        },
+                      ),
+                    ),
+                    SizedBox(
+                      width: 150,
+                      child: TextField(
+                        controller: _controllerText,
+                        focusNode: _focusNode,
+                        onChanged: (value) {
+                          if(_controllerText.text != ""){
+                            widget.textFinal = _controllerText.text;
+                          }
+                        },
+                        decoration: const InputDecoration(
+                          border: InputBorder.none,
+                          labelText: '...',
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                        onPressed: () {
+                          FocusManager.instance.primaryFocus?.unfocus();
+                        },
+                        icon: const Icon(Icons.check, color: Colors.green))
+                  ],
                 ),
-              ),
-              SizedBox(
-                width: 150,
-                child: TextField(
-                  controller: _controllerText,
-                  focusNode: _focusNode,
-                  onChanged: (value) {},
-                  decoration: const InputDecoration(
-                    border: InputBorder.none,
-                    labelText: '...',
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ) : const SizedBox.shrink(),
+              )
+            : const SizedBox.shrink(),
       ],
     );
   }
@@ -189,13 +200,11 @@ class _TitleContentState extends State<TitleContent> {
       if (speechEnabled) {
         await speech.listen(
           onResult: (result) {
-            print("RESULTADO: ${result.recognizedWords}");
             setState(() {
               _controllerText.text = result.recognizedWords;
             });
           },
         );
-        print("IS LISTENING: ${speech.isListening}");
         isListening = speech.isListening;
         setState(() {});
       } else {
@@ -203,7 +212,6 @@ class _TitleContentState extends State<TitleContent> {
       }
     } else {
       await speech.stop();
-      print("IS LISTENING: ${speech.isListening}");
       isListening = speech.isListening;
       setState(() {});
     }

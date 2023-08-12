@@ -21,13 +21,15 @@ class RelatoryRepository extends IRelatoryRepository {
   }
 
   String getDatetime() {
-    return DateFormat("yyyy-MM-dd").format(DateTime.now());
+    return DateFormat("yyyy-MM-dd").format(DateTime.parse("2023-08-11"));
   }
 
   @override
   Future<List<ScripModel>> getScrips(String idSurvey) async {
     final response =
         await get("TitulosMesclados?chave=$phone&idAgendamento=$idSurvey");
+
+    print("json > ${jsonDecode(response?.data)}");
     return (jsonDecode(response?.data) as List)
         .map<ScripModel>((scrip) => ScripModel.fromMap(scrip))
         .toList();

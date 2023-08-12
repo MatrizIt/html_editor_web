@@ -144,15 +144,13 @@ class _FormattedTextState extends State<FormattedText> {
     for (ScripModel scrip in widget.scrips) {
       final List<InlineSpan> inlineSpans = [];
       final title = scrip.title;
+      var text = "";
       for (int selectedTeaching in scrip.selectedTeachings) {
         print("Recarregando");
         final regex = RegExp(r"!\*(.*?)\*!");
         int start = 0;
-        var text = "";
         if (scrip.teachings.isNotEmpty) {
           text = scrip.getTeachingText(selectedTeaching);
-          print("SCRIP TITLE: ${scrip.title}");
-          print("SCRIP TEXT: ${scrip.getTeachingText(selectedTeaching)}");
         } else if (scrip.teachings.isEmpty) {
           text = "Ocorreu um Erro";
         }
@@ -165,9 +163,7 @@ class _FormattedTextState extends State<FormattedText> {
             if (anotherScrip.selectedTeachings
                 .contains(anotherScrip.teachings.indexOf(teaching))) {
               teaching.gatilhos?.forEach((gatilho) {
-                print("Gatilho dentro do for ${gatilho.idScrip} + ${scrip.id}");
                 if (gatilho.idScrip == scrip.id) {
-                  print("Gatilho add > ${gatilho.teachingText}");
                   setState(() {
                     text += "\n" + gatilho.teachingText;
                   });
@@ -208,6 +204,7 @@ class _FormattedTextState extends State<FormattedText> {
                     .substring(start, phraseStart)
                     .replaceAll("<br>", "\n")
                     .replaceAll("</br>", "\n")
+                    .replaceAll("</div>", "\n")
                     .replaceAll("&nbsp;", " ")
                     .replaceAll(RegExp(r"<[^>]+>"), ""),
               ),
@@ -276,6 +273,7 @@ class _FormattedTextState extends State<FormattedText> {
                     widget.scrips.indexOf(scrip), selectedTeaching);
               });
             },
+            textFinal: text,
           ),
         );
       } catch (e, s) {
