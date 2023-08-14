@@ -150,13 +150,13 @@ class _FormattedTextState extends State<FormattedText> {
 
   @override
   Widget build(BuildContext context) {
+    print(controllers.map((controller) => controller.id).toList());
     inlineWidgets = [];
     for (ScripModel scrip in widget.scrips) {
       final List<InlineSpan> inlineSpans = [];
       final title = scrip.title;
       var text = "";
       for (int selectedTeaching in scrip.selectedTeachings) {
-        print("Recarregando");
         final regex = RegExp(r"!\*(.*?)\*!");
         int start = 0;
         if (scrip.teachings.isNotEmpty) {
@@ -200,12 +200,14 @@ class _FormattedTextState extends State<FormattedText> {
           final phraseEnd = match.end;
 
           if (phrase != null) {
-            PhraseEditingController? phraseCtrl = controllers.map((controller) {
-              if (controller.id ==
-                  "${scrip.teachings[selectedTeaching].id}$index") {
-                return controller;
+            PhraseEditingController? phraseCtrl;
+            for (var controller in controllers) {
+              final id = "${scrip.teachings[selectedTeaching].id}$index";
+              if (controller.id == id) {
+                phraseCtrl = controller;
+                break;
               }
-            }).firstOrNull;
+            }
             if (phraseCtrl == null) {
               phraseCtrl = PhraseEditingController(
                 id: "${scrip.teachings[selectedTeaching].id}$index",
@@ -230,7 +232,6 @@ class _FormattedTextState extends State<FormattedText> {
                 TextSpan(text: phrase),
               );
             } else {
-              print(phrase);
               inlineSpans.add(
                 WidgetSpan(
                   child: SizedBox(
