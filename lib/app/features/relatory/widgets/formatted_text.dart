@@ -229,7 +229,26 @@ class _FormattedTextState extends State<FormattedText> {
             if (phrase.startsWith("!**")) {
               //print(phrase);
               inlineSpans.add(
-                TextSpan(text: phrase),
+                WidgetSpan(
+                  child: SizedBox(
+                    height: 18,
+                    child: IntrinsicWidth(
+                      child: AppTextField(
+                        phrase: phrase,
+                        onChanged: (text) {
+                          final index = controllers.indexOf(phraseCtrl!);
+                          final controller = controllers[index];
+                          controller.text = text;
+                          controllers[index] = controller;
+                        },
+                        selectedOption:
+                        controllers[controllers.indexOf(phraseCtrl)].text,
+                        controller:
+                        controllers[controllers.indexOf(phraseCtrl)],
+                      ),
+                    ),
+                  ),
+                ),
               );
             } else {
               inlineSpans.add(
