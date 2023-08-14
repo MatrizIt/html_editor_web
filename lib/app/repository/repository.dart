@@ -32,6 +32,7 @@ class Repository {
           token,
         ),
       );
+      print("RESPONSE: ${response.body}");
       /*print("RESPONSE STATUS CODE> ${response.statusCode}");
       print("RESPONSE> ${response.body}");*/
       return ResponseModel.fromHttp(response);

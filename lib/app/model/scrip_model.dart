@@ -9,6 +9,7 @@ class ScripModel {
   final int leading;
   bool isVisible = true;
   List<int> selectedTeachings = [0];
+  String finalText = '';
   ScripModel({
     required this.id,
     required this.title,

@@ -55,6 +55,7 @@ dependencies:
   htmltopdfwidgets: ^0.0.8+1
   dropdown_button2: ^2.3.7
   speech_to_text: ^6.3.0
+  uuid: ^3.0.7
 
 
 dev_dependencies:

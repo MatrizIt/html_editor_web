@@ -7,6 +7,7 @@ import 'package:reportpad/app/core/ui/helpers/phrase_editing_controller.dart';
 import 'package:reportpad/app/features/relatory/widgets/title_content.dart';
 import 'package:reportpad/app/model/teaching_model.dart';
 import 'package:reportpad/app/repository/relatory/i_relatory_repository.dart';
+import '../../../core/ui/helpers/scrip_final_text.dart';
 import '../../../model/scrip_model.dart';
 
 class FormattedText extends StatefulWidget {
@@ -27,6 +28,7 @@ class FormattedText extends StatefulWidget {
 class _FormattedTextState extends State<FormattedText> {
   final List<PhraseEditingController> controllers = [];
   List<TitleContent> inlineWidgets = [];
+  List<TeachingFinalText> teachingFinalTexts = [];
   late final IRelatoryRepository repository;
 
   @override
@@ -46,6 +48,8 @@ class _FormattedTextState extends State<FormattedText> {
               "TEACHING: $selectedTeaching, Texto: ${scrip.getTeachingText(selectedTeaching)}");
           text += "${scrip.getTeachingText(selectedTeaching)}</br>";
         }
+        text += scrip.finalText;
+        print("TEXTOOO: ${text.substring(text.length - 50)}");
       }
       final scripsAux = widget.scrips.map<ScripModel?>((s) {
         if (s != scrip) return s;
@@ -70,12 +74,12 @@ class _FormattedTextState extends State<FormattedText> {
         text += "</br>";
       }
     }
-    print("TEXTO: $text");
     return text;
   }
 
   void generateText() async {
     String text = mountText();
+    print("Tem ou não tem? ${text.contains("Miguel Marques")}");
 
     for (ScripModel scrip in widget.scrips) {
       if (!scrip.isVisible) {
@@ -95,22 +99,22 @@ class _FormattedTextState extends State<FormattedText> {
       }
     }
     text = text.replaceAll(RegExp(r"!\*.+\(.*?.*?\)=.*?\*!"), "");
-    text = text.replaceAll("Ocorreu um erro", "");
+
     var path = await PdfHelper().createPDF(text);
     final ctxt = context;
 
-    await showDialog(
-      context: ctxt,
-      builder: (context) {
-        return PDFView(
-          filePath: path,
-        );
-      },
-    );
-    /*Modular.to.pushNamed(
+    // await showDialog(
+    //   context: ctxt,
+    //   builder: (context) {
+    //     return PDFView(
+    //       filePath: path,
+    //     );
+    //   },
+    // );
+    Modular.to.pushNamed(
       '/result_preview/',
       arguments: text,
-    );*/
+    );
   }
 
   void changeScripVisibility(int index) {
@@ -136,6 +140,12 @@ class _FormattedTextState extends State<FormattedText> {
     scrip.teachings[newSelectedTeaching] = resp;
     widget.scrips[scripIndex] = scrip;
     setState(() {});
+  }
+
+  void changeScripFinalText(int scripIndex, String text) {
+    final scrip = widget.scrips[scripIndex];
+    scrip.finalText = text;
+    widget.scrips[scripIndex] = scrip;
   }
 
   @override
@@ -176,31 +186,36 @@ class _FormattedTextState extends State<FormattedText> {
             }
           });
         }
-        for (final match in regex.allMatches(
-          text.replaceAll("</br>", "\n"),
-        )) {
+        for (int index = 0;
+            index <
+                regex
+                    .allMatches(
+                      text.replaceAll("</br>", "\n"),
+                    )
+                    .length;
+            index++) {
+          final match = regex
+              .allMatches(
+                text.replaceAll("</br>", "\n"),
+              )
+              .toList()[index];
           final phrase = match.group(0);
           final phraseStart = match.start;
           final phraseEnd = match.end;
 
           if (phrase != null) {
-            int? exists;
-            PhraseEditingController phraseCtrl;
-            for (PhraseEditingController phraseCtrl in controllers) {
-              if (phraseCtrl.phrase == phrase &&
-                  phraseCtrl.teachingId ==
-                      scrip.teachings[selectedTeaching].id) {
-                exists = controllers.indexOf(phraseCtrl);
+            PhraseEditingController? phraseCtrl = controllers.map((controller) {
+              if (controller.id ==
+                  "${scrip.teachings[selectedTeaching].id}$index") {
+                return controller;
               }
-            }
-            if (exists == null) {
+            }).firstOrNull;
+            if (phraseCtrl == null) {
               phraseCtrl = PhraseEditingController(
-                teachingId: scrip.teachings[selectedTeaching].id,
+                id: "${scrip.teachings[selectedTeaching].id}$index",
                 phrase: phrase,
               );
               controllers.add(phraseCtrl);
-            } else {
-              phraseCtrl = controllers[exists];
             }
             inlineSpans.add(
               TextSpan(
@@ -227,7 +242,7 @@ class _FormattedTextState extends State<FormattedText> {
                       child: AppTextField(
                         phrase: phrase,
                         onChanged: (text) {
-                          final index = controllers.indexOf(phraseCtrl);
+                          final index = controllers.indexOf(phraseCtrl!);
                           final controller = controllers[index];
                           controller.text = text;
                           controllers[index] = controller;
@@ -256,27 +271,30 @@ class _FormattedTextState extends State<FormattedText> {
       try {
         inlineWidgets.add(
           TitleContent(
-            idSurvey: widget.idSurvey,
-            idTeaching: (scrip.teachings.firstOrNull?.id).toString(),
-            title: title,
-            content: inlineSpans,
-            isVisible: scrip.isVisible,
-            selectedTeachings: scrip.selectedTeachings,
-            changeVisibility: () {
-              setState(() {
-                changeScripVisibility(widget.scrips.indexOf(scrip));
-              });
-            },
-            teachings: scrip.teachings
-                .map<String>((teaching) => teaching.name)
-                .toList(),
-            changeSelectedTeaching: (selectedTeaching) {
-              setState(() {
-                changeSelectedTeaching(
-                    widget.scrips.indexOf(scrip), selectedTeaching);
-              });
-            },
-          ),
+              idSurvey: widget.idSurvey,
+              idTeaching: (scrip.teachings.firstOrNull?.id).toString(),
+              title: title,
+              content: inlineSpans,
+              isVisible: scrip.isVisible,
+              selectedTeachings: scrip.selectedTeachings,
+              changeVisibility: () {
+                setState(() {
+                  changeScripVisibility(widget.scrips.indexOf(scrip));
+                });
+              },
+              teachings: scrip.teachings
+                  .map<String>((teaching) => teaching.name)
+                  .toList(),
+              changeSelectedTeaching: (selectedTeaching) {
+                setState(() {
+                  changeSelectedTeaching(
+                      widget.scrips.indexOf(scrip), selectedTeaching);
+                });
+              },
+              onChangeFinalText: (text) {
+                print("TEXTO: $text");
+                changeScripFinalText(widget.scrips.indexOf(scrip), text);
+              }),
         );
       } catch (e, s) {
         print("ERROR: $e, STACKTRACE: $s");

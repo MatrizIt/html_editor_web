@@ -17,6 +17,7 @@ class TitleContent extends StatefulWidget {
   final VoidCallback changeVisibility;
   final List<int> selectedTeachings;
   final Function(int selectedTeaching) changeSelectedTeaching;
+  final Function(String text) onChangeFinalText;
 
   const TitleContent({
     super.key,
@@ -29,6 +30,7 @@ class TitleContent extends StatefulWidget {
     required this.changeVisibility,
     required this.teachings,
     required this.changeSelectedTeaching,
+    required this.onChangeFinalText,
   });
 
   @override
@@ -38,8 +40,7 @@ class TitleContent extends StatefulWidget {
 class _TitleContentState extends State<TitleContent> {
   stt.SpeechToText speech = stt.SpeechToText();
   StreamController<bool> atualizaIconMic = StreamController<bool>.broadcast();
-  final TextEditingController _controllerText =
-      TextEditingController();
+  final TextEditingController _controllerText = TextEditingController();
   bool speechEnabled = false;
   bool isListening = false;
   FocusNode _focusNode = FocusNode();
@@ -137,37 +138,40 @@ class _TitleContentState extends State<TitleContent> {
                 : const SizedBox.shrink(),
           ),
         ),
-        widget.isVisible == true ? Transform(
-          transform:  Matrix4.translationValues(-15.0, -45.0, 0.0),
-          child: Row(
-            children: [
-              IconButton(
-                onPressed: listen,
-                icon: StreamBuilder<bool>(
-                  stream: atualizaIconMic.stream,
-                  builder: (context, snapshot) {
-                    return Icon(
-                      Icons.mic,
-                      color: isListening == true ? Colors.red : Colors.black,
-                    );
-                  },
+        widget.isVisible == true
+            ? Transform(
+                transform: Matrix4.translationValues(-15.0, -45.0, 0.0),
+                child: Row(
+                  children: [
+                    IconButton(
+                      onPressed: listen,
+                      icon: StreamBuilder<bool>(
+                        stream: atualizaIconMic.stream,
+                        builder: (context, snapshot) {
+                          return Icon(
+                            Icons.mic,
+                            color:
+                                isListening == true ? Colors.red : Colors.black,
+                          );
+                        },
+                      ),
+                    ),
+                    SizedBox(
+                      width: 150,
+                      child: TextField(
+                        controller: _controllerText,
+                        focusNode: _focusNode,
+                        onChanged: widget.onChangeFinalText,
+                        decoration: const InputDecoration(
+                          border: InputBorder.none,
+                          labelText: '...',
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-              SizedBox(
-                width: 150,
-                child: TextField(
-                  controller: _controllerText,
-                  focusNode: _focusNode,
-                  onChanged: (value) {},
-                  decoration: const InputDecoration(
-                    border: InputBorder.none,
-                    labelText: '...',
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ) : const SizedBox.shrink(),
+              )
+            : const SizedBox.shrink(),
       ],
     );
   }
