@@ -15,7 +15,6 @@ class TitleContent extends StatefulWidget {
   final VoidCallback changeVisibility;
   final List<int> selectedTeachings;
   final Function(int selectedTeaching) changeSelectedTeaching;
-
   final Function(String text) onChangeFinalText;
 
   TitleContent({
@@ -167,6 +166,11 @@ class _TitleContentState extends State<TitleContent> {
                         ),
                       ),
                     ),
+                    IconButton(
+                        onPressed: () {
+                          FocusManager.instance.primaryFocus?.unfocus();
+                        },
+                        icon: const Icon(Icons.check, color: Colors.green))
                   ],
                 ),
               )
