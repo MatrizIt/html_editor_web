@@ -15,7 +15,6 @@ class PdfHelper {
       final fontBytes = await rootBundle.load('assets/fonts/Inter-Regular.ttf');
       final pdf = pw.Document();
       final widgets = await HTMLToPdf().convert(text);
-      print('Olá Mundo');
       pdf.addPage(
         pw.Page(
           build: (pw.Context context) {

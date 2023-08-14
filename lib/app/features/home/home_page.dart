@@ -106,7 +106,7 @@ class _HomePageState extends HomeView<HomePage> {
                   const SizedBox(
                     height: 10,
                   ),
-                  const Text("V1.0.2"),
+                  const Text("V1.0.11"),
                 ],
               ),
             ],

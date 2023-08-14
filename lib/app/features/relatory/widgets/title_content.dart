@@ -3,8 +3,6 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:reportpad/app/features/relatory/widgets/app_dropdown_multiselect.dart';
-import 'package:reportpad/app/features/relatory/widgets/app_text_field.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 class TitleContent extends StatefulWidget {
@@ -17,9 +15,10 @@ class TitleContent extends StatefulWidget {
   final VoidCallback changeVisibility;
   final List<int> selectedTeachings;
   final Function(int selectedTeaching) changeSelectedTeaching;
+
   final Function(String text) onChangeFinalText;
 
-  const TitleContent({
+  TitleContent({
     super.key,
     required this.idSurvey,
     required this.idTeaching,
@@ -193,13 +192,11 @@ class _TitleContentState extends State<TitleContent> {
       if (speechEnabled) {
         await speech.listen(
           onResult: (result) {
-            print("RESULTADO: ${result.recognizedWords}");
             setState(() {
               _controllerText.text = result.recognizedWords;
             });
           },
         );
-        print("IS LISTENING: ${speech.isListening}");
         isListening = speech.isListening;
         setState(() {});
       } else {
@@ -207,7 +204,6 @@ class _TitleContentState extends State<TitleContent> {
       }
     } else {
       await speech.stop();
-      print("IS LISTENING: ${speech.isListening}");
       isListening = speech.isListening;
       setState(() {});
     }

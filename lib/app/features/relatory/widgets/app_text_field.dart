@@ -184,6 +184,7 @@ class _AppTextFieldState extends State<AppTextField> {
               setState(() {
                 widget.onChanged(value as String);
               });
+              FocusManager.instance.primaryFocus?.unfocus();
             },
             selectedOption: widget.controller.text,
             hintText: "Selecione",
@@ -214,6 +215,7 @@ class _AppTextFieldState extends State<AppTextField> {
                 }
               }
               widget.onChanged(parsed);
+              FocusManager.instance.primaryFocus?.unfocus();
             },
             displayCompleteItem: true,
             textFieldDecoration: InputDecoration(
