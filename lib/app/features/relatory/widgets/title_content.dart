@@ -136,6 +136,9 @@ class _TitleContentState extends State<TitleContent> {
                 : const SizedBox.shrink(),
           ),
         ),
+        const SizedBox(
+          height: 20,
+        ),
         widget.isVisible == true
             ? Transform(
                 transform: Matrix4.translationValues(-15.0, -45.0, 0.0),

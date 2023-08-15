@@ -10,13 +10,9 @@ class PhraseEditingController extends TextEditingController {
     required this.phrase,
   }) {
     if (phrase.contains("select") || phrase.contains("multiselect")) {
-      final text = phrase
-          .replaceAll("!*select", "")
-          .replaceAll("!*multiselect", "")
-          .replaceAll("*!", "")
-          .replaceAll("(", "")
-          .replaceAll(")", "");
-      defaultValue = text.split(",")[0];
+      final regexp = RegExp(r'!\*.*?\(.*?.*?\)=(.*?)\*!');
+      final text = regexp.firstMatch(phrase);
+      defaultValue = text?.group(1);
     }
   }
 }
