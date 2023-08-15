@@ -44,8 +44,8 @@ class RelatoryRepository extends IRelatoryRepository {
   }
 
   @override
-  Future<void> getPreviewReport(String phone, String procedure, String idSurvey, String html, bool isPDF) async {
+  Future<void> getPreviewReport(String phone, int idProcedure, int idSurvey, String html, bool isPDF) async {
     await get(
-        "PreviewReport?chave=$phone&idProcedimento=$procedure&idAgendamento=$idSurvey&html=$html&pdf=$isPDF");
+        "PreviewReport?chave=$phone&idProcedimento=$idProcedure&idAgendamento=$idSurvey&html=$html&pdf=$isPDF");
   }
 }

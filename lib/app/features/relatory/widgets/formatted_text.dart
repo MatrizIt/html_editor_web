@@ -14,12 +14,14 @@ class FormattedText extends StatefulWidget {
   final Function(String) onGeneratedText;
   final String idSurvey;
   final String phone;
+  final String idProcedure;
   const FormattedText({
     super.key,
     required this.scrips,
     required this.onGeneratedText,
     required this.idSurvey,
     required this.phone,
+    required this.idProcedure,
   });
 
   @override
@@ -111,7 +113,7 @@ class _FormattedTextState extends State<FormattedText> {
     //     );
     //   },
     // );
-    //await repository.getPreviewReport("5511945436068");
+    await repository.getPreviewReport(widget.phone, int.parse(widget.idProcedure),int.parse(widget.idSurvey),text, false);
 
     Modular.to.pushNamed(
       '/result_preview/',

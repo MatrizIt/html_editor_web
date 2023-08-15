@@ -49,6 +49,7 @@ class _RelatoryPageState extends RelatoryView<RelatoryPage> {
             idSurvey: widget.idSurvey,
             scrips: widget.scrips,
             phone: widget.phone,
+            idProcedure: widget.idProcedure,
             onGeneratedText: (text) async {
               await showDialog(
                 context: context,
