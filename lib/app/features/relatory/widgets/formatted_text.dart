@@ -14,11 +14,13 @@ class FormattedText extends StatefulWidget {
   final List<ScripModel> scrips;
   final Function(String) onGeneratedText;
   final String idSurvey;
+  final String phone;
   const FormattedText({
     super.key,
     required this.scrips,
     required this.onGeneratedText,
     required this.idSurvey,
+    required this.phone,
   });
 
   @override

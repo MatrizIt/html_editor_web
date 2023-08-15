@@ -71,7 +71,8 @@ class _WorklistPageState extends WorklistView<WorklistPage> {
                 child: GestureDetector(
                   onTap: () {
                     print("Survey > ${survey.id}");
-                    getScrips(survey.id.toString(), survey.procedureName);
+
+                    getScrips(survey.id.toString(), survey.procedureName, widget.phone, survey.idProcedure.toString());
                   },
                   child: Container(
                     width: .85.sw,

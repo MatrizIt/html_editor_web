@@ -9,11 +9,15 @@ class RelatoryPage extends StatefulWidget {
   final List<ScripModel> scrips;
   final String title;
   final String idSurvey;
+  final String phone;
+  final String idProcedure;
   const RelatoryPage(
       {super.key,
       required this.scrips,
       required this.title,
-      required this.idSurvey});
+      required this.idSurvey,
+      required this.phone,
+      required this.idProcedure});
 
   @override
   State<RelatoryPage> createState() => _RelatoryPageState();
@@ -44,6 +48,7 @@ class _RelatoryPageState extends RelatoryView<RelatoryPage> {
           child: FormattedText(
             idSurvey: widget.idSurvey,
             scrips: widget.scrips,
+            phone: widget.phone,
             onGeneratedText: (text) async {
               await showDialog(
                 context: context,

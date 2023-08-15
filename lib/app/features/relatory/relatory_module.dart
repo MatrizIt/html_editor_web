@@ -19,10 +19,16 @@ class RelatoryModule extends Module {
 
         final String idSurvey = routeArgs['idSurvey'] ?? "0";
 
+        final String phone = routeArgs['phone'] ?? "";
+
+        final String idProcedure = routeArgs['procedure'] ?? "";
+
         return RelatoryPage(
           scrips: scrips,
           title: title,
           idSurvey: idSurvey,
+          phone: phone,
+          idProcedure: idProcedure,
         );
       },
     );
