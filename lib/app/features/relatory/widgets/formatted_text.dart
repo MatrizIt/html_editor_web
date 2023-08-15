@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:reportpad/app/core/ui/helpers/pdf_helper.dart';
 import 'package:reportpad/app/features/relatory/widgets/app_text_field.dart';
 import 'package:reportpad/app/core/ui/helpers/phrase_editing_controller.dart';
@@ -43,7 +42,7 @@ class _FormattedTextState extends State<FormattedText> {
     String text = "";
 
     for (var scrip in widget.scrips) {
-      text += "<b>${scrip.title}</b>";
+      text += "<b>${scrip.title}</b></br>";
       if (scrip.teachings.isNotEmpty) {
         for (int selectedTeaching in scrip.selectedTeachings) {
           print(
@@ -81,7 +80,6 @@ class _FormattedTextState extends State<FormattedText> {
 
   void generateText() async {
     String text = mountText();
-    print("Tem ou não tem? ${text.contains("Miguel Marques")}");
 
     for (ScripModel scrip in widget.scrips) {
       if (!scrip.isVisible) {
@@ -154,7 +152,6 @@ class _FormattedTextState extends State<FormattedText> {
 
   @override
   Widget build(BuildContext context) {
-    print(controllers.map((controller) => controller.id).toList());
     inlineWidgets = [];
     for (ScripModel scrip in widget.scrips) {
       final List<InlineSpan> inlineSpans = [];
@@ -164,7 +161,13 @@ class _FormattedTextState extends State<FormattedText> {
         final regex = RegExp(r"!\*(.*?)\*!");
         int start = 0;
         if (scrip.teachings.isNotEmpty) {
-          text = scrip.getTeachingText(selectedTeaching);
+          text = scrip
+              .getTeachingText(selectedTeaching)
+              .replaceAll("<br>", "\n")
+              .replaceAll("</br>", "\n")
+              .replaceAll("&nbsp;", "   ")
+              .replaceAll("<div>", "\n")
+              .replaceAll("</div>", "\n");
         } else if (scrip.teachings.isEmpty) {
           text = "Ocorreu um Erro";
         }
@@ -186,19 +189,8 @@ class _FormattedTextState extends State<FormattedText> {
             }
           });
         }
-        for (int index = 0;
-            index <
-                regex
-                    .allMatches(
-                      text.replaceAll("</br>", "\n").replaceAll("</div>;", "\n"),
-                    )
-                    .length;
-            index++) {
-          final match = regex
-              .allMatches(
-                text.replaceAll("</br>", "\n").replaceAll("</div>;", "\n"),
-              )
-              .toList()[index];
+        for (int index = 0; index < regex.allMatches(text).length; index++) {
+          final match = regex.allMatches(text).toList()[index];
           final phrase = match.group(0);
           final phraseStart = match.start;
           final phraseEnd = match.end;
@@ -220,15 +212,7 @@ class _FormattedTextState extends State<FormattedText> {
               controllers.add(phraseCtrl);
             }
             inlineSpans.add(
-              TextSpan(
-                text: text
-                    .substring(start, phraseStart)
-                    .replaceAll("<br>", "\n")
-                    .replaceAll("</br>", "\n")
-                    .replaceAll("</div>", "\n")
-                    .replaceAll("&nbsp;", " ")
-                    .replaceAll(RegExp(r"<[^>]+>"), ""),
-              ),
+              TextSpan(text: text.substring(start, phraseStart)),
             );
             if (phrase.startsWith("!**")) {
               //print(phrase);
@@ -246,9 +230,9 @@ class _FormattedTextState extends State<FormattedText> {
                           controllers[index] = controller;
                         },
                         selectedOption:
-                        controllers[controllers.indexOf(phraseCtrl)].text,
+                            controllers[controllers.indexOf(phraseCtrl)].text,
                         controller:
-                        controllers[controllers.indexOf(phraseCtrl)],
+                            controllers[controllers.indexOf(phraseCtrl)],
                       ),
                     ),
                   ),
@@ -284,8 +268,7 @@ class _FormattedTextState extends State<FormattedText> {
         }
         inlineSpans.add(
           TextSpan(
-            text:
-                "${text.substring(start).replaceAll("</div>;", "\n").replaceAll(RegExp(r"<[^>]+>"), "").replaceAll("&nbsp;", " ")}\n\n",
+            text: "${text.substring(start)}",
           ),
         );
       }

@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:reportpad/app/core/ui/helpers/phrase_editing_controller.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:intl/intl.dart';
+import 'package:reportpad/app/features/relatory/widgets/app_multiselect_dropdown_textfield.dart';
 
 import 'app_dropdown_textfield.dart';
 
@@ -187,44 +188,17 @@ class _AppTextFieldState extends State<AppTextField> {
               FocusManager.instance.primaryFocus?.unfocus();
             },
             selectedOption: widget.controller.text,
-            hintText: "Selecione",
+            hintText: widget.controller.defaultValue ?? "Selecione",
           );
         case Type.multiselection:
-          return DropDownTextField.multiSelection(
-            initialValue: parsedOptions[0].value,
-            onChanged: (values) {
-              String parsed = "";
-              if (values is List<DropDownValueModel>) {
-                for (int i = 0; i < values.length; i++) {
-                  if (i == 0) {
-                    parsed = values[i].name;
-                    continue;
-                  }
-                  if (values.length == 2) {
-                    parsed += " e ${values[i].name}";
-                    continue;
-                  }
-                  if (values.length == 3) {
-                    if (i == 1) {
-                      parsed += ", ${values[i].name}";
-                      continue;
-                    }
-                    parsed += " e ${values[i].name}";
-                    continue;
-                  }
-                }
-              }
-              widget.onChanged(parsed);
-              FocusManager.instance.primaryFocus?.unfocus();
+          return AppMultiselectDropdownTextfield(
+            options: widget.options,
+            selectedOptions: widget.controller.text,
+            initialValue: widget.controller.defaultValue ?? "Selecione",
+            onSelect: (parsedSelectedOptions) {
+              widget.onChanged(parsedSelectedOptions);
+              setState(() {});
             },
-            displayCompleteItem: true,
-            textFieldDecoration: InputDecoration(
-                border: const UnderlineInputBorder(borderSide: BorderSide.none),
-                contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                hintText: "${parsedOptions[0].name} ",
-                hintStyle: const TextStyle(color: Colors.blue)),
-            dropDownList: parsedOptions,
           );
         case Type.error:
           return Text(widget.phrase);
@@ -241,7 +215,7 @@ class _AppTextFieldState extends State<AppTextField> {
               contentPadding:
                   const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
               hintText: getLabel(widget.phrase) ?? widget.defaultValue,
-              hintStyle: TextStyle(
+              hintStyle: const TextStyle(
                 color: Colors.blue,
               ),
             ),
