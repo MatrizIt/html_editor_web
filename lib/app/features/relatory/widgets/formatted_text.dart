@@ -111,6 +111,8 @@ class _FormattedTextState extends State<FormattedText> {
     //     );
     //   },
     // );
+    //await repository.getPreviewReport("5511945436068");
+
     Modular.to.pushNamed(
       '/result_preview/',
       arguments: text,
@@ -186,13 +188,13 @@ class _FormattedTextState extends State<FormattedText> {
             index <
                 regex
                     .allMatches(
-                      text.replaceAll("</br>", "\n"),
+                      text.replaceAll("</br>", "\n").replaceAll("</div>;", "\n"),
                     )
                     .length;
             index++) {
           final match = regex
               .allMatches(
-                text.replaceAll("</br>", "\n"),
+                text.replaceAll("</br>", "\n").replaceAll("</div>;", "\n"),
               )
               .toList()[index];
           final phrase = match.group(0);
@@ -281,7 +283,7 @@ class _FormattedTextState extends State<FormattedText> {
         inlineSpans.add(
           TextSpan(
             text:
-                "${text.substring(start).replaceAll(RegExp(r"<[^>]+>"), "").replaceAll("&nbsp;", " ")}\n\n",
+                "${text.substring(start).replaceAll("</div>;", "\n").replaceAll(RegExp(r"<[^>]+>"), "").replaceAll("&nbsp;", " ")}\n\n",
           ),
         );
       }

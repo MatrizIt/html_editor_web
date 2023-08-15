@@ -22,7 +22,6 @@ class RelatoryRepository extends IRelatoryRepository {
 
   String getDatetime() {
     return DateFormat("yyyy-MM-dd").format(DateTime.now());
-
   }
 
   @override
@@ -39,8 +38,14 @@ class RelatoryRepository extends IRelatoryRepository {
     final response = await get(
         "EnsinamentosMesclados?idEnsinamento=$idTeaching&idAgendamento=$idSurvey");
 
-    print("Data Teaching > ${jsonDecode(response?.data)['ensinamentos'][0]}");
+    print("Agendamento e ensinamento ");
 
     return TeachingModel.fromMap(jsonDecode(response?.data)['ensinamentos'][0]);
+  }
+
+  @override
+  Future<void> getPreviewReport(String phone, String procedure, String idSurvey, String html, bool isPDF) async {
+    await get(
+        "PreviewReport?chave=$phone&idProcedimento=$procedure&idAgendamento=$idSurvey&html=$html&pdf=$isPDF");
   }
 }
