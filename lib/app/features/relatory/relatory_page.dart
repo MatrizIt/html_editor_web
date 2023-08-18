@@ -13,11 +13,11 @@ class RelatoryPage extends StatefulWidget {
   final String idProcedure;
   const RelatoryPage(
       {super.key,
-      required this.scrips,
-      required this.title,
-      required this.idSurvey,
-      required this.phone,
-      required this.idProcedure});
+        required this.scrips,
+        required this.title,
+        required this.idSurvey,
+        required this.phone,
+        required this.idProcedure});
 
   @override
   State<RelatoryPage> createState() => _RelatoryPageState();
@@ -37,7 +37,7 @@ class _RelatoryPageState extends RelatoryView<RelatoryPage> {
       ),
       body: GestureDetector(
         onTap: () {
-          FocusScope.of(context).requestFocus(FocusNode());
+          FocusManager.instance.primaryFocus?.unfocus();
         },
         child: InteractiveViewer(
           boundaryMargin: const EdgeInsets.all(

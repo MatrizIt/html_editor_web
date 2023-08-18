@@ -36,12 +36,13 @@ class _AppDropdownTextfieldState extends State<AppDropdownTextfield> {
               replacement: Text(
                 widget.hintText,
                 style: GoogleFonts.inter(
-                  color: Colors.blueAccent,
-                  fontSize: 12,
+                    color: Colors.blue,
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold
                 ),
               ),
               visible:
-                  widget.selectedOption != null && widget.selectedOption != '',
+              widget.selectedOption != null && widget.selectedOption != '',
               child: Text(
                 widget.selectedOption!,
                 style: GoogleFonts.inter(
@@ -56,18 +57,18 @@ class _AppDropdownTextfieldState extends State<AppDropdownTextfield> {
               child: const Icon(Icons.arrow_drop_down),
               itemBuilder: (context) =>
                   widget.options.map<PopupMenuItem>((option) {
-                return PopupMenuItem(
-                  value: option,
-                  child: Text(
-                    option,
-                    style: GoogleFonts.inter(
-                      color: widget.selectedOption == option
-                          ? Colors.blueAccent
-                          : Colors.black,
-                    ),
-                  ),
-                );
-              }).toList(),
+                    return PopupMenuItem(
+                      value: option,
+                      child: Text(
+                        option,
+                        style: GoogleFonts.inter(
+                          color: widget.selectedOption == option
+                              ? Colors.blue
+                              : Colors.black,
+                        ),
+                      ),
+                    );
+                  }).toList(),
             ),
           ],
         ),

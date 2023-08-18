@@ -3,13 +3,14 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:reportpad/app/model/teaching_model.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 class TitleContent extends StatefulWidget {
   final String idSurvey;
   final String idTeaching;
   final String title;
-  final List<String> teachings;
+  final List<TeachingModel> teachings;
   final List<InlineSpan> content;
   final bool isVisible;
   final VoidCallback changeVisibility;
@@ -51,12 +52,11 @@ class _TitleContentState extends State<TitleContent> {
 
   @override
   Widget build(BuildContext context) {
+    bool _expandDescription = false;
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Transform(
-          transform: Matrix4.translationValues(-12.0, 0.0, 0.0),
+          transform: Matrix4.translationValues(-8.0, 0.0, 0.0),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.start,
@@ -85,98 +85,111 @@ class _TitleContentState extends State<TitleContent> {
                 },
                 itemBuilder: (context) =>
                     widget.teachings.map<PopupMenuItem>((teaching) {
-                  return PopupMenuItem(
-                    value: widget.teachings.indexOf(teaching),
-                    child: Row(
-                      children: [
-                        Icon(
-                          widget.selectedTeachings
+                      return PopupMenuItem(
+                        value: widget.teachings.indexOf(teaching),
+                        child: Row(
+                          children: [
+                            Icon(
+                              widget.selectedTeachings
                                   .contains(widget.teachings.indexOf(teaching))
-                              ? Icons.check_box
-                              : Icons.square_outlined,
-                          color: Colors.black,
+                                  ? Icons.check_box
+                                  : Icons.square_outlined,
+                              color: Colors.black,
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            Text(
+                              teaching.name,
+                              style: GoogleFonts.inter(
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ],
                         ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        Text(
-                          teaching,
-                          style: GoogleFonts.inter(
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                }).toList(),
+                      );
+                    }).toList(),
               ),
             ],
           ),
         ),
         Transform(
-          transform: Matrix4.translationValues(0.0, -12.0, 0.0),
+          transform: Matrix4.translationValues(12.0, 0.0, 0.0),
           child: AnimatedSwitcher(
             duration: const Duration(
               milliseconds: 300,
             ),
             child: widget.isVisible == true
-                ? RichText(
-                    textAlign: TextAlign.justify,
-                    text: TextSpan(
-                      style: GoogleFonts.inter(
-                        fontSize: 14,
-                        color: Colors.black,
-                        height: 1.5,
-                      ),
-                      children: widget.content,
-                    ),
-                  )
+                ? SizedBox(
+              width: MediaQuery.sizeOf(context).width / 0.4,
+              child: RichText(
+                textAlign: TextAlign.start,
+                text: TextSpan(
+                  style: GoogleFonts.inter(
+                    fontSize: 14,
+                    color: Colors.black,
+                    height: 1.5,
+                  ),
+                  children: widget.content,
+                ),
+              ),
+            )
                 : const SizedBox.shrink(),
           ),
         ),
-        const SizedBox(
-          height: 20,
-        ),
         widget.isVisible == true
-            ? Transform(
-                transform: Matrix4.translationValues(-15.0, -45.0, 0.0),
-                child: Row(
-                  children: [
-                    IconButton(
-                      onPressed: listen,
-                      icon: StreamBuilder<bool>(
-                        stream: atualizaIconMic.stream,
-                        builder: (context, snapshot) {
-                          return Icon(
-                            Icons.mic,
-                            color:
-                                isListening == true ? Colors.red : Colors.black,
-                          );
-                        },
-                      ),
-                    ),
-                    SizedBox(
-                      width: 150,
-                      child: TextField(
-                        controller: _controllerText,
-                        focusNode: _focusNode,
-                        onChanged: widget.onChangeFinalText,
-                        decoration: const InputDecoration(
-                          border: InputBorder.none,
-                          labelText: '...',
-                        ),
-                      ),
-                    ),
-                    IconButton(
+            ? SizedBox(
+          height: _controllerText.text.length > 40 ? 70 : 20,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Transform(
+                transform: Matrix4.translationValues(0.0, -16.0, 0.0),
+                child: IconButton(
+                  alignment: Alignment.topCenter,
+                  onPressed: listen,
+                  icon: StreamBuilder<bool>(
+                    stream: atualizaIconMic.stream,
+                    builder: (context, snapshot) {
+                      return Icon(
+                        Icons.mic,
+                        color: isListening == true
+                            ? Colors.red
+                            : Colors.black,
+                      );
+                    },
+                  ),
+                ),
+              ),
+              SizedBox(
+                width: MediaQuery.sizeOf(context).width / 1.2,
+                child: TextField(
+                  controller: _controllerText,
+                  focusNode: _focusNode,
+                  onChanged: (text){
+                    widget.onChangeFinalText("$text\n");
+                    if(_controllerText.text.length > 40){
+                      setState(() {});
+                    }
+                  },
+                  maxLines: _controllerText.text.length > 40 ? 5 : 1,
+                  decoration: const InputDecoration(
+                    border: InputBorder.none,
+                  ),
+
+                ),
+              ),
+              /*IconButton(
                         onPressed: () {
                           FocusManager.instance.primaryFocus?.unfocus();
                         },
-                        icon: const Icon(Icons.check, color: Colors.green))
-                  ],
-                ),
-              )
+                        icon: const Icon(Icons.check, color: Colors.green))*/
+            ],
+          ),
+        )
             : const SizedBox.shrink(),
       ],
     );
@@ -201,6 +214,7 @@ class _TitleContentState extends State<TitleContent> {
           onResult: (result) {
             setState(() {
               _controllerText.text = result.recognizedWords;
+              widget.onChangeFinalText("${_controllerText.text}\n");
             });
           },
         );

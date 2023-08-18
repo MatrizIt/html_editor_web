@@ -8,5 +8,5 @@ abstract class IRelatoryRepository extends Repository {
   Future<List<SurveyModel>> getSurveys(String phone);
   Future<List<ScripModel>> getScrips(String idSurvey);
   Future<TeachingModel> getTeachings(String idTeaching, String idSurvey);
-  Future<void> getPreviewReport(String phone, int idProcedure, int idSurvey, String html, bool isPDF);
+  Future<dynamic> getPreviewReport(String phone, int idProcedure, int idSurvey, String html, bool isPDF);
 }

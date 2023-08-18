@@ -1,5 +1,9 @@
+import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:open_file/open_file.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:reportpad/app/core/ui/helpers/pdf_helper.dart';
 import 'package:reportpad/app/features/relatory/widgets/app_text_field.dart';
 import 'package:reportpad/app/core/ui/helpers/phrase_editing_controller.dart';
@@ -47,12 +51,9 @@ class _FormattedTextState extends State<FormattedText> {
       text += "<b>${scrip.title}</b></br>";
       if (scrip.teachings.isNotEmpty) {
         for (int selectedTeaching in scrip.selectedTeachings) {
-          print(
-              "TEACHING: $selectedTeaching, Texto: ${scrip.getTeachingText(selectedTeaching)}");
-          text += "${scrip.getTeachingText(selectedTeaching)}</br>";
+          text += "${scrip.getTeachingText(selectedTeaching)}";
         }
-        text += scrip.finalText;
-        print("TEXTOOO: ${text.substring(text.length - 50)}");
+        text += "&nbsp;${scrip.finalText}<br>";
       }
       final scripsAux = widget.scrips.map<ScripModel?>((s) {
         if (s != scrip) return s;
@@ -82,6 +83,7 @@ class _FormattedTextState extends State<FormattedText> {
 
   void generateText() async {
     String text = mountText();
+    var regXP = RegExp(r"\[.*!\]");
 
     for (ScripModel scrip in widget.scrips) {
       if (!scrip.isVisible) {
@@ -100,25 +102,52 @@ class _FormattedTextState extends State<FormattedText> {
         );
       }
     }
-    text = text.replaceAll(RegExp(r"!\*.+\(.*?.*?\)=.*?\*!"), "");
+    //text = text.replaceAll(RegExp(r"!\*.+\(.*?.*?\)=.*?\*!"), "");
+
+
+    for(var match in regXP.allMatches(text)){
+      print("Match ${match.group(0)}");
+      var textMatch = match.group(0);
+      if((textMatch?.contains("!*")  ?? false) || (textMatch?.contains("!**") ?? false )){
+        text = text.replaceAll("$textMatch]" ?? "", "");
+      }
+    }
+
+    text = text.replaceAll(RegExp(r"!\*.*?\*!"), "");
 
     var path = await PdfHelper().createPDF(text);
     final ctxt = context;
 
-    // await showDialog(
-    //   context: ctxt,
-    //   builder: (context) {
-    //     return PDFView(
-    //       filePath: path,
-    //     );
-    //   },
-    // );
-    await repository.getPreviewReport(widget.phone, int.parse(widget.idProcedure),int.parse(widget.idSurvey),text, false);
+    var data = await repository.getPreviewReport(widget.phone, int.parse(widget.idProcedure),int.parse(widget.idSurvey),text, false);
 
-    Modular.to.pushNamed(
+    //log("Data > ${data}");
+
+
+    String base64StringFromAPI = data; // Substitua pelo seu base64
+    List<int> bytes = base64.decode(base64StringFromAPI.replaceAll('"', ""));
+
+    Directory directory = await getApplicationDocumentsDirectory();
+    String docxFilePath = '${directory.path}/arquivo.docx';
+
+    File docxFile = File(docxFilePath);
+    await docxFile.writeAsBytes(bytes);
+
+    OpenFile.open(docxFilePath);
+
+    /*await showDialog(
+      context: ctxt,
+      builder: (context) {
+        return PDFView(
+          filePath: null,
+          pdfData: pdfBytes,
+        );
+      },
+    );*/
+
+    /*Modular.to.pushNamed(
       '/result_preview/',
       arguments: text,
-    );
+    );*/
   }
 
   void changeScripVisibility(int index) {
@@ -167,9 +196,9 @@ class _FormattedTextState extends State<FormattedText> {
               .getTeachingText(selectedTeaching)
               .replaceAll("<br>", "\n")
               .replaceAll("</br>", "\n")
-              .replaceAll("&nbsp;", "   ")
-              .replaceAll("<div>", "\n")
-              .replaceAll("</div>", "\n");
+              .replaceAll("&nbsp;", " ")
+              .replaceAll("<div>", "")
+              .replaceAll("</div>", "\n").replaceAll(RegExp(r"<[^>]+>"), "");
         } else if (scrip.teachings.isEmpty) {
           text = "Ocorreu um Erro";
         }
@@ -232,9 +261,9 @@ class _FormattedTextState extends State<FormattedText> {
                           controllers[index] = controller;
                         },
                         selectedOption:
-                            controllers[controllers.indexOf(phraseCtrl)].text,
+                        controllers[controllers.indexOf(phraseCtrl)].text,
                         controller:
-                            controllers[controllers.indexOf(phraseCtrl)],
+                        controllers[controllers.indexOf(phraseCtrl)],
                       ),
                     ),
                   ),
@@ -255,9 +284,9 @@ class _FormattedTextState extends State<FormattedText> {
                           controllers[index] = controller;
                         },
                         selectedOption:
-                            controllers[controllers.indexOf(phraseCtrl)].text,
+                        controllers[controllers.indexOf(phraseCtrl)].text,
                         controller:
-                            controllers[controllers.indexOf(phraseCtrl)],
+                        controllers[controllers.indexOf(phraseCtrl)],
                       ),
                     ),
                   ),
@@ -288,9 +317,7 @@ class _FormattedTextState extends State<FormattedText> {
                   changeScripVisibility(widget.scrips.indexOf(scrip));
                 });
               },
-              teachings: scrip.teachings
-                  .map<String>((teaching) => teaching.name)
-                  .toList(),
+              teachings: scrip.teachings,
               changeSelectedTeaching: (selectedTeaching) {
                 setState(() {
                   changeSelectedTeaching(
@@ -298,8 +325,8 @@ class _FormattedTextState extends State<FormattedText> {
                 });
               },
               onChangeFinalText: (text) {
-                print("TEXTO: $text");
-                changeScripFinalText(widget.scrips.indexOf(scrip), text);
+                var scripIndex = widget.scrips.indexOf(scrip);
+                changeScripFinalText(scripIndex, text);
               }),
         );
       } catch (e, s) {
@@ -324,7 +351,7 @@ class _FormattedTextState extends State<FormattedText> {
         child: SingleChildScrollView(
           child: Padding(
               padding:
-                  const EdgeInsets.symmetric(horizontal: 20.0, vertical: 25),
+              const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8),
               child: Column(
                 children: inlineWidgets,
               )),

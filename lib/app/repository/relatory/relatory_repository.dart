@@ -27,7 +27,7 @@ class RelatoryRepository extends IRelatoryRepository {
   @override
   Future<List<ScripModel>> getScrips(String idSurvey) async {
     final response =
-        await get("TitulosMesclados?chave=$phone&idAgendamento=$idSurvey");
+    await get("TitulosMesclados?chave=$phone&idAgendamento=$idSurvey");
     return (jsonDecode(response?.data) as List)
         .map<ScripModel>((scrip) => ScripModel.fromMap(scrip))
         .toList();
@@ -44,8 +44,12 @@ class RelatoryRepository extends IRelatoryRepository {
   }
 
   @override
-  Future<void> getPreviewReport(String phone, int idProcedure, int idSurvey, String html, bool isPDF) async {
-    await get(
+  Future<dynamic> getPreviewReport(String phone, int idProcedure, int idSurvey, String html, bool isPDF) async {
+    var response = await get(
         "PreviewReport?chave=$phone&idProcedimento=$idProcedure&idAgendamento=$idSurvey&html=$html&pdf=$isPDF");
+
+    print("PreviewReport > chave=$phone&idProcedimento=$idProcedure&idAgendamento=$idSurvey&html=$html&pdf=$isPDF");
+
+    return response?.data;
   }
 }

@@ -79,7 +79,7 @@ class AppTextField extends StatefulWidget {
     }
     if ([Type.multiselection, Type.selection].contains(type)) {
       match?.group(2)!.split(",").forEach(
-        (option) {
+            (option) {
           options.add(option);
         },
       );
@@ -100,7 +100,7 @@ class _AppTextFieldState extends State<AppTextField> {
     ),
   );
   final MultiValueDropDownController _ctrlMulti =
-      MultiValueDropDownController();
+  MultiValueDropDownController();
 
   String? getLabel(String text) {
     try {
@@ -171,7 +171,7 @@ class _AppTextFieldState extends State<AppTextField> {
   Widget _selectInputType() {
     return <Widget>() {
       final List<DropDownValueModel> parsedOptions =
-          widget.options.map<DropDownValueModel>((option) {
+      widget.options.map<DropDownValueModel>((option) {
         return DropDownValueModel(
           name: option,
           value: option,
@@ -213,10 +213,11 @@ class _AppTextFieldState extends State<AppTextField> {
             decoration: InputDecoration(
               border: const UnderlineInputBorder(borderSide: BorderSide.none),
               contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+              const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
               hintText: getLabel(widget.phrase) ?? widget.defaultValue,
               hintStyle: const TextStyle(
                 color: Colors.blue,
+
               ),
             ),
           );
