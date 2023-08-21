@@ -6,12 +6,14 @@ class AppMultiselectDropdownTextfield extends StatefulWidget {
   final String initialValue;
   final Function(String parsedSelectedOptions) onSelect;
   final String selectedOptions;
-  const AppMultiselectDropdownTextfield({
+  bool isNotNull;
+  AppMultiselectDropdownTextfield({
     super.key,
     required this.options,
     required this.selectedOptions,
     required this.initialValue,
     required this.onSelect,
+    required this.isNotNull,
   });
 
   @override
@@ -52,7 +54,7 @@ class _AppMultiselectDropdownTextfieldState
               replacement: Text(
                 widget.initialValue,
                 style: GoogleFonts.inter(
-                  color: Colors.blueAccent,
+                  color: widget.isNotNull == true ? Colors.red : Colors.blue,
                   fontSize: 12,
                 ),
               ),

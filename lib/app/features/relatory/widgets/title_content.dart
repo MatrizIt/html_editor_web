@@ -52,11 +52,10 @@ class _TitleContentState extends State<TitleContent> {
 
   @override
   Widget build(BuildContext context) {
-    bool _expandDescription = false;
     return Column(
       children: [
         Transform(
-          transform: Matrix4.translationValues(-8.0, 0.0, 0.0),
+          transform: Matrix4.translationValues(-8.0, 10.0, 0.0),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.start,
@@ -139,6 +138,7 @@ class _TitleContentState extends State<TitleContent> {
                 : const SizedBox.shrink(),
           ),
         ),
+        const SizedBox(height: 12,),
         widget.isVisible == true
             ? SizedBox(
           height: _controllerText.text.length > 40 ? 70 : 20,
@@ -147,7 +147,7 @@ class _TitleContentState extends State<TitleContent> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Transform(
-                transform: Matrix4.translationValues(0.0, -16.0, 0.0),
+                transform: Matrix4.translationValues(0.0, -12.0, 0.0),
                 child: IconButton(
                   alignment: Alignment.topCenter,
                   onPressed: listen,
@@ -191,6 +191,7 @@ class _TitleContentState extends State<TitleContent> {
           ),
         )
             : const SizedBox.shrink(),
+
       ],
     );
   }

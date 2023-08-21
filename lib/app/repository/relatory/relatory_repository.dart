@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:reportpad/app/model/scrip_model.dart';
 import 'package:reportpad/app/model/survey_model.dart';
@@ -21,7 +22,7 @@ class RelatoryRepository extends IRelatoryRepository {
   }
 
   String getDatetime() {
-    return DateFormat("yyyy-MM-dd").format(DateTime.now());
+    return DateFormat("yyyy-MM-dd").format(DateTime.parse("2023-08-18"));
   }
 
   @override
@@ -45,10 +46,9 @@ class RelatoryRepository extends IRelatoryRepository {
 
   @override
   Future<dynamic> getPreviewReport(String phone, int idProcedure, int idSurvey, String html, bool isPDF) async {
+    final finalHTML = html.replaceAll("&", "%26");
     var response = await get(
-        "PreviewReport?chave=$phone&idProcedimento=$idProcedure&idAgendamento=$idSurvey&html=$html&pdf=$isPDF");
-
-    print("PreviewReport > chave=$phone&idProcedimento=$idProcedure&idAgendamento=$idSurvey&html=$html&pdf=$isPDF");
+        "PreviewReport?chave=$phone&idProcedimento=$idProcedure&idAgendamento=$idSurvey&html=$finalHTML&pdf=$isPDF");
 
     return response?.data;
   }

@@ -6,12 +6,14 @@ class AppDropdownTextfield extends StatefulWidget {
   final String? selectedOption;
   final Function(dynamic option) onSelectOption;
   final String hintText;
-  const AppDropdownTextfield({
+  bool isNotNull;
+   AppDropdownTextfield({
     Key? key,
     required this.options,
     required this.selectedOption,
     required this.onSelectOption,
     required this.hintText,
+     required this.isNotNull,
   }) : super(key: key);
 
   @override
@@ -36,7 +38,7 @@ class _AppDropdownTextfieldState extends State<AppDropdownTextfield> {
               replacement: Text(
                 widget.hintText,
                 style: GoogleFonts.inter(
-                    color: Colors.blue,
+                    color: widget.isNotNull == true ? Colors.red : Colors.blue,
                     fontSize: 12,
                     fontWeight: FontWeight.bold
                 ),

@@ -28,6 +28,7 @@ class AppTextField extends StatefulWidget {
   final Function(String text) onChanged;
   final PhraseEditingController controller;
   var defaultValue = "";
+  bool isNotNull;
 
   AppTextField({
     super.key,
@@ -35,6 +36,7 @@ class AppTextField extends StatefulWidget {
     required this.onChanged,
     required this.controller,
     required this.selectedOption,
+    required this.isNotNull,
   }) {
     RegExp exp = RegExp(r'!\*([^\(]+)\(([^\)]+)\)=?(.*?)?\*!');
     RegExpMatch? match;
@@ -181,6 +183,7 @@ class _AppTextFieldState extends State<AppTextField> {
         case Type.selection:
           return AppDropdownTextfield(
             options: widget.options,
+            isNotNull: widget.isNotNull,
             onSelectOption: (value) {
               setState(() {
                 widget.onChanged(value as String);
@@ -194,6 +197,7 @@ class _AppTextFieldState extends State<AppTextField> {
           return AppMultiselectDropdownTextfield(
             options: widget.options,
             selectedOptions: widget.controller.text,
+            isNotNull: widget.isNotNull,
             initialValue: widget.controller.defaultValue ?? "Selecione",
             onSelect: (parsedSelectedOptions) {
               widget.onChanged(parsedSelectedOptions);
@@ -215,9 +219,8 @@ class _AppTextFieldState extends State<AppTextField> {
               contentPadding:
               const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
               hintText: getLabel(widget.phrase) ?? widget.defaultValue,
-              hintStyle: const TextStyle(
-                color: Colors.blue,
-
+              hintStyle: TextStyle(
+                color: widget.isNotNull == true ? Colors.red : Colors.blue,
               ),
             ),
           );

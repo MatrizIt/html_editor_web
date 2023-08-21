@@ -37,6 +37,7 @@ class _FormattedTextState extends State<FormattedText> {
   List<TitleContent> inlineWidgets = [];
   List<TeachingFinalText> teachingFinalTexts = [];
   late final IRelatoryRepository repository;
+  bool isNotNull = true;
 
   @override
   void initState() {
@@ -53,7 +54,7 @@ class _FormattedTextState extends State<FormattedText> {
         for (int selectedTeaching in scrip.selectedTeachings) {
           text += "${scrip.getTeachingText(selectedTeaching)}";
         }
-        text += "&nbsp;${scrip.finalText}<br>";
+        text += "&nbsp;${scrip.finalText}</br>";
       }
       final scripsAux = widget.scrips.map<ScripModel?>((s) {
         if (s != scrip) return s;
@@ -83,7 +84,7 @@ class _FormattedTextState extends State<FormattedText> {
 
   void generateText() async {
     String text = mountText();
-    var regXP = RegExp(r"\[.*!\]");
+    var regXP = RegExp(r"\[\[(.*?)\]\]");
 
     for (ScripModel scrip in widget.scrips) {
       if (!scrip.isVisible) {
@@ -106,48 +107,45 @@ class _FormattedTextState extends State<FormattedText> {
 
 
     for(var match in regXP.allMatches(text)){
-      print("Match ${match.group(0)}");
       var textMatch = match.group(0);
+      print("Match > ${textMatch}");
       if((textMatch?.contains("!*")  ?? false) || (textMatch?.contains("!**") ?? false )){
-        text = text.replaceAll("$textMatch]" ?? "", "");
+        print("Existe > ${textMatch?.contains("!*")}");
+        text = text.replaceAll("$textMatch" ?? "", "");
+      }
+    }
+
+    for(var match in regXP.allMatches(text)){
+      var textMatch = match.group(0);
+
+      if(textMatch?.contains("[[") ?? false){
+        text = text.replaceAll("[[" ?? "", "");
+        text = text.replaceAll("]]" ?? "", "");
       }
     }
 
     text = text.replaceAll(RegExp(r"!\*.*?\*!"), "");
 
-    var path = await PdfHelper().createPDF(text);
-    final ctxt = context;
-
-    var data = await repository.getPreviewReport(widget.phone, int.parse(widget.idProcedure),int.parse(widget.idSurvey),text, false);
-
-    //log("Data > ${data}");
-
+    /*var data = await repository.getPreviewReport(widget.phone, int.parse(widget.idProcedure),int.parse(widget.idSurvey),text, false);
 
     String base64StringFromAPI = data; // Substitua pelo seu base64
     List<int> bytes = base64.decode(base64StringFromAPI.replaceAll('"', ""));
 
-    Directory directory = await getApplicationDocumentsDirectory();
-    String docxFilePath = '${directory.path}/arquivo.docx';
+    var directory = await getExternalStorageDirectory();
+    String docxFilePath = '${directory?.path}/arquivo.docx';
 
-    File docxFile = File(docxFilePath);
-    await docxFile.writeAsBytes(bytes);
+    try {
+      File docxFile = await File(docxFilePath).writeAsBytes(bytes);
 
-    OpenFile.open(docxFilePath);
+      OpenFile.open(docxFile.path.substring(1, docxFile.path.length));
+    } catch (e) {
+      print(e);
+    }*/
 
-    /*await showDialog(
-      context: ctxt,
-      builder: (context) {
-        return PDFView(
-          filePath: null,
-          pdfData: pdfBytes,
-        );
-      },
-    );*/
-
-    /*Modular.to.pushNamed(
+    Modular.to.pushNamed(
       '/result_preview/',
-      arguments: text,
-    );*/
+      arguments: {"result": text, "procedure": widget.idProcedure, "phone": widget.phone, "idSurvey": widget.idSurvey},
+    );
   }
 
   void changeScripVisibility(int index) {
@@ -184,6 +182,7 @@ class _FormattedTextState extends State<FormattedText> {
   @override
   Widget build(BuildContext context) {
     inlineWidgets = [];
+    bool _isTextFieldValid = true;
     for (ScripModel scrip in widget.scrips) {
       final List<InlineSpan> inlineSpans = [];
       final title = scrip.title;
@@ -250,7 +249,7 @@ class _FormattedTextState extends State<FormattedText> {
               inlineSpans.add(
                 WidgetSpan(
                   child: SizedBox(
-                    height: 18,
+                    height: 20,
                     child: IntrinsicWidth(
                       child: AppTextField(
                         phrase: phrase,
@@ -264,6 +263,7 @@ class _FormattedTextState extends State<FormattedText> {
                         controllers[controllers.indexOf(phraseCtrl)].text,
                         controller:
                         controllers[controllers.indexOf(phraseCtrl)],
+                        isNotNull: true,
                       ),
                     ),
                   ),
@@ -287,6 +287,7 @@ class _FormattedTextState extends State<FormattedText> {
                         controllers[controllers.indexOf(phraseCtrl)].text,
                         controller:
                         controllers[controllers.indexOf(phraseCtrl)],
+                        isNotNull: false,
                       ),
                     ),
                   ),

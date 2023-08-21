@@ -35,32 +35,27 @@ class _RelatoryPageState extends RelatoryView<RelatoryPage> {
         title: Text(widget.title),
         backgroundColor: const Color.fromRGBO(1, 134, 167, 100),
       ),
-      body: GestureDetector(
-        onTap: () {
-          FocusManager.instance.primaryFocus?.unfocus();
-        },
-        child: InteractiveViewer(
-          boundaryMargin: const EdgeInsets.all(
-            20.0,
-          ),
-          minScale: 0.5,
-          maxScale: 4.0, //
-          child: FormattedText(
-            idSurvey: widget.idSurvey,
-            scrips: widget.scrips,
-            phone: widget.phone,
-            idProcedure: widget.idProcedure,
-            onGeneratedText: (text) async {
-              await showDialog(
-                context: context,
-                builder: (context) {
-                  return Dialog(
-                    child: Text(text),
-                  );
-                },
-              );
-            },
-          ),
+      body: InteractiveViewer(
+        boundaryMargin: const EdgeInsets.all(
+          20.0,
+        ),
+        minScale: 0.5,
+        maxScale: 4.0, //
+        child: FormattedText(
+          idSurvey: widget.idSurvey,
+          scrips: widget.scrips,
+          phone: widget.phone,
+          idProcedure: widget.idProcedure,
+          onGeneratedText: (text) async {
+            await showDialog(
+              context: context,
+              builder: (context) {
+                return Dialog(
+                  child: Text(text),
+                );
+              },
+            );
+          },
         ),
       ),
     );
