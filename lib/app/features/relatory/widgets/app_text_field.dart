@@ -6,6 +6,7 @@ import 'package:reportpad/app/core/ui/helpers/phrase_editing_controller.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:intl/intl.dart';
 import 'package:reportpad/app/features/relatory/widgets/app_multiselect_dropdown_textfield.dart';
+import 'package:validatorless/validatorless.dart';
 
 import 'app_dropdown_textfield.dart';
 
@@ -81,7 +82,7 @@ class AppTextField extends StatefulWidget {
     }
     if ([Type.multiselection, Type.selection].contains(type)) {
       match?.group(2)!.split(",").forEach(
-            (option) {
+        (option) {
           options.add(option);
         },
       );
@@ -102,7 +103,7 @@ class _AppTextFieldState extends State<AppTextField> {
     ),
   );
   final MultiValueDropDownController _ctrlMulti =
-  MultiValueDropDownController();
+      MultiValueDropDownController();
 
   String? getLabel(String text) {
     try {
@@ -173,7 +174,7 @@ class _AppTextFieldState extends State<AppTextField> {
   Widget _selectInputType() {
     return <Widget>() {
       final List<DropDownValueModel> parsedOptions =
-      widget.options.map<DropDownValueModel>((option) {
+          widget.options.map<DropDownValueModel>((option) {
         return DropDownValueModel(
           name: option,
           value: option,
@@ -207,17 +208,34 @@ class _AppTextFieldState extends State<AppTextField> {
         case Type.error:
           return Text(widget.phrase);
         default:
-          return TextField(
+          return TextFormField(
             readOnly: widget.type == Type.date,
             textAlignVertical: TextAlignVertical.center,
             onTap: widget.type == Type.date ? pickDate : null,
             inputFormatters: fillInputFormatters(),
             keyboardType: setKeyboardType(),
             controller: widget.controller,
+            validator: widget.isNotNull
+                ? (text) {
+                    if (text == null || text.isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          backgroundColor: Colors.red,
+                          duration: Duration(seconds: 1),
+                          content: Text(
+                            "Há um campo obrigatório que não foi preenchido",
+                          ),
+                        ),
+                      );
+                      return "";
+                    }
+                    return null;
+                  }
+                : null,
             decoration: InputDecoration(
               border: const UnderlineInputBorder(borderSide: BorderSide.none),
               contentPadding:
-              const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                  const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
               hintText: getLabel(widget.phrase) ?? widget.defaultValue,
               hintStyle: TextStyle(
                 color: widget.isNotNull == true ? Colors.red : Colors.blue,

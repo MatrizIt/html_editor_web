@@ -84,32 +84,32 @@ class _TitleContentState extends State<TitleContent> {
                 },
                 itemBuilder: (context) =>
                     widget.teachings.map<PopupMenuItem>((teaching) {
-                      return PopupMenuItem(
-                        value: widget.teachings.indexOf(teaching),
-                        child: Row(
-                          children: [
-                            Icon(
-                              widget.selectedTeachings
+                  return PopupMenuItem(
+                    value: widget.teachings.indexOf(teaching),
+                    child: Row(
+                      children: [
+                        Icon(
+                          widget.selectedTeachings
                                   .contains(widget.teachings.indexOf(teaching))
-                                  ? Icons.check_box
-                                  : Icons.square_outlined,
-                              color: Colors.black,
-                            ),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            Text(
-                              teaching.name,
-                              style: GoogleFonts.inter(
-                                fontSize: 10,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                              ),
-                            ),
-                          ],
+                              ? Icons.check_box
+                              : Icons.square_outlined,
+                          color: Colors.black,
                         ),
-                      );
-                    }).toList(),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Text(
+                          teaching.name,
+                          style: GoogleFonts.inter(
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }).toList(),
               ),
             ],
           ),
@@ -122,76 +122,76 @@ class _TitleContentState extends State<TitleContent> {
             ),
             child: widget.isVisible == true
                 ? SizedBox(
-              width: MediaQuery.sizeOf(context).width / 0.4,
-              child: RichText(
-                textAlign: TextAlign.start,
-                text: TextSpan(
-                  style: GoogleFonts.inter(
-                    fontSize: 14,
-                    color: Colors.black,
-                    height: 1.5,
-                  ),
-                  children: widget.content,
-                ),
-              ),
-            )
+                    width: MediaQuery.sizeOf(context).width / 0.4,
+                    child: RichText(
+                      textAlign: TextAlign.start,
+                      text: TextSpan(
+                        style: GoogleFonts.inter(
+                          fontSize: 14,
+                          color: Colors.black,
+                          height: 1.5,
+                        ),
+                        children: widget.content,
+                      ),
+                    ),
+                  )
                 : const SizedBox.shrink(),
           ),
         ),
-        const SizedBox(height: 12,),
+        const SizedBox(
+          height: 12,
+        ),
         widget.isVisible == true
             ? SizedBox(
-          height: _controllerText.text.length > 40 ? 70 : 20,
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Transform(
-                transform: Matrix4.translationValues(0.0, -12.0, 0.0),
-                child: IconButton(
-                  alignment: Alignment.topCenter,
-                  onPressed: listen,
-                  icon: StreamBuilder<bool>(
-                    stream: atualizaIconMic.stream,
-                    builder: (context, snapshot) {
-                      return Icon(
-                        Icons.mic,
-                        color: isListening == true
-                            ? Colors.red
-                            : Colors.black,
-                      );
-                    },
-                  ),
-                ),
-              ),
-              SizedBox(
-                width: MediaQuery.sizeOf(context).width / 1.2,
-                child: TextField(
-                  controller: _controllerText,
-                  focusNode: _focusNode,
-                  onChanged: (text){
-                    widget.onChangeFinalText("$text\n");
-                    if(_controllerText.text.length > 40){
-                      setState(() {});
-                    }
-                  },
-                  maxLines: _controllerText.text.length > 40 ? 5 : 1,
-                  decoration: const InputDecoration(
-                    border: InputBorder.none,
-                  ),
-
-                ),
-              ),
-              /*IconButton(
+                height: _controllerText.text.length > 40 ? 70 : 20,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Transform(
+                      transform: Matrix4.translationValues(0.0, -12.0, 0.0),
+                      child: IconButton(
+                        alignment: Alignment.topCenter,
+                        onPressed: listen,
+                        icon: StreamBuilder<bool>(
+                          stream: atualizaIconMic.stream,
+                          builder: (context, snapshot) {
+                            return Icon(
+                              Icons.mic,
+                              color: isListening == true
+                                  ? Colors.red
+                                  : Colors.black,
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      width: MediaQuery.sizeOf(context).width / 1.2,
+                      child: TextField(
+                        controller: _controllerText,
+                        focusNode: _focusNode,
+                        onChanged: (text) {
+                          widget.onChangeFinalText("$text\n");
+                          if (_controllerText.text.length > 40) {
+                            setState(() {});
+                          }
+                        },
+                        maxLines: _controllerText.text.length > 40 ? 5 : 1,
+                        decoration: const InputDecoration(
+                          border: InputBorder.none,
+                        ),
+                      ),
+                    ),
+                    /*IconButton(
                         onPressed: () {
                           FocusManager.instance.primaryFocus?.unfocus();
                         },
                         icon: const Icon(Icons.check, color: Colors.green))*/
-            ],
-          ),
-        )
+                  ],
+                ),
+              )
             : const SizedBox.shrink(),
-
       ],
     );
   }

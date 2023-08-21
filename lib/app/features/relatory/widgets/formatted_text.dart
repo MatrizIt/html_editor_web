@@ -38,6 +38,7 @@ class _FormattedTextState extends State<FormattedText> {
   List<TeachingFinalText> teachingFinalTexts = [];
   late final IRelatoryRepository repository;
   bool isNotNull = true;
+  final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -52,7 +53,7 @@ class _FormattedTextState extends State<FormattedText> {
       text += "<b>${scrip.title}</b></br>";
       if (scrip.teachings.isNotEmpty) {
         for (int selectedTeaching in scrip.selectedTeachings) {
-          text += "${scrip.getTeachingText(selectedTeaching)}";
+          text += scrip.getTeachingText(selectedTeaching);
         }
         text += "&nbsp;${scrip.finalText}</br>";
       }
@@ -68,7 +69,7 @@ class _FormattedTextState extends State<FormattedText> {
               print("Gatilho dentro do for ${gatilho.idScrip} + ${scrip.id}");
               if (gatilho.idScrip == scrip.id) {
                 print("Gatilho add > ${gatilho.teachingText}");
-                text += "\n" + gatilho.teachingText;
+                text += "\n${gatilho.teachingText}";
                 print("TEXTO CONTAINS: ${text.contains(gatilho.teachingText)}");
               }
             });
@@ -96,36 +97,36 @@ class _FormattedTextState extends State<FormattedText> {
     }
 
     for (PhraseEditingController controller in controllers) {
-      if (controller.text != "" || controller.defaultValue != null) {
-        text = text.replaceFirst(
-          controller.phrase,
-          controller.text.isEmpty ? controller.defaultValue! : controller.text,
-        );
-      }
+      text = text.replaceFirst(
+        controller.phrase,
+        controller.text.isEmpty
+            ? controller.defaultValue ?? "!**"
+            : controller.text,
+      );
     }
     //text = text.replaceAll(RegExp(r"!\*.+\(.*?.*?\)=.*?\*!"), "");
 
-
-    for(var match in regXP.allMatches(text)){
+    for (var match in regXP.allMatches(text)) {
       var textMatch = match.group(0);
       print("Match > ${textMatch}");
-      if((textMatch?.contains("!*")  ?? false) || (textMatch?.contains("!**") ?? false )){
+      if ((textMatch?.contains("!*") ?? false) ||
+          (textMatch?.contains("!**") ?? false)) {
         print("Existe > ${textMatch?.contains("!*")}");
-        text = text.replaceAll("$textMatch" ?? "", "");
+        text = text.replaceAll("$textMatch", "");
       }
     }
 
-    for(var match in regXP.allMatches(text)){
+    for (var match in regXP.allMatches(text)) {
       var textMatch = match.group(0);
 
-      if(textMatch?.contains("[[") ?? false){
-        text = text.replaceAll("[[" ?? "", "");
-        text = text.replaceAll("]]" ?? "", "");
+      if (textMatch?.contains("[[") ?? false) {
+        text = text.replaceAll("[[", "");
+        text = text.replaceAll("]]", "");
       }
     }
 
     text = text.replaceAll(RegExp(r"!\*.*?\*!"), "");
-
+    text = text.replaceAll("!**", "");
     /*var data = await repository.getPreviewReport(widget.phone, int.parse(widget.idProcedure),int.parse(widget.idSurvey),text, false);
 
     String base64StringFromAPI = data; // Substitua pelo seu base64
@@ -144,7 +145,12 @@ class _FormattedTextState extends State<FormattedText> {
 
     Modular.to.pushNamed(
       '/result_preview/',
-      arguments: {"result": text, "procedure": widget.idProcedure, "phone": widget.phone, "idSurvey": widget.idSurvey},
+      arguments: {
+        "result": text,
+        "procedure": widget.idProcedure,
+        "phone": widget.phone,
+        "idSurvey": widget.idSurvey
+      },
     );
   }
 
@@ -197,7 +203,8 @@ class _FormattedTextState extends State<FormattedText> {
               .replaceAll("</br>", "\n")
               .replaceAll("&nbsp;", " ")
               .replaceAll("<div>", "")
-              .replaceAll("</div>", "\n").replaceAll(RegExp(r"<[^>]+>"), "");
+              .replaceAll("</div>", "\n")
+              .replaceAll(RegExp(r"<[^>]+>"), "");
         } else if (scrip.teachings.isEmpty) {
           text = "Ocorreu um Erro";
         }
@@ -260,9 +267,9 @@ class _FormattedTextState extends State<FormattedText> {
                           controllers[index] = controller;
                         },
                         selectedOption:
-                        controllers[controllers.indexOf(phraseCtrl)].text,
+                            controllers[controllers.indexOf(phraseCtrl)].text,
                         controller:
-                        controllers[controllers.indexOf(phraseCtrl)],
+                            controllers[controllers.indexOf(phraseCtrl)],
                         isNotNull: true,
                       ),
                     ),
@@ -284,9 +291,9 @@ class _FormattedTextState extends State<FormattedText> {
                           controllers[index] = controller;
                         },
                         selectedOption:
-                        controllers[controllers.indexOf(phraseCtrl)].text,
+                            controllers[controllers.indexOf(phraseCtrl)].text,
                         controller:
-                        controllers[controllers.indexOf(phraseCtrl)],
+                            controllers[controllers.indexOf(phraseCtrl)],
                         isNotNull: false,
                       ),
                     ),
@@ -338,7 +345,9 @@ class _FormattedTextState extends State<FormattedText> {
       floatingActionButton: FloatingActionButton(
         backgroundColor: const Color.fromRGBO(0, 160, 0, 100),
         onPressed: () {
-          generateText();
+          if (_formKey.currentState?.validate() ?? false) {
+            generateText();
+          }
         },
         child: const Icon(
           Icons.send,
@@ -352,9 +361,12 @@ class _FormattedTextState extends State<FormattedText> {
         child: SingleChildScrollView(
           child: Padding(
               padding:
-              const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8),
-              child: Column(
-                children: inlineWidgets,
+                  const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  children: inlineWidgets,
+                ),
               )),
         ),
       ),

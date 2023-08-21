@@ -18,14 +18,15 @@ class ResultPreviewPage extends StatefulWidget {
   final String idSurvey;
   const ResultPreviewPage({
     super.key,
-    required this.result, required this.phone, required this.idProcedure, required this.idSurvey,
+    required this.result,
+    required this.phone,
+    required this.idProcedure,
+    required this.idSurvey,
   });
 
   @override
   State<ResultPreviewPage> createState() => _ResultPreviewPageState();
 }
-
-
 
 class _ResultPreviewPageState extends State<ResultPreviewPage> {
   late final IRelatoryRepository repository;
@@ -37,10 +38,14 @@ class _ResultPreviewPageState extends State<ResultPreviewPage> {
     repository = Modular.get<IRelatoryRepository>();
   }
 
-
   void generateDocu() async {
     log("Texto > ${widget.result}");
-    var data = await repository.getPreviewReport(widget.phone, int.parse(widget.idProcedure),int.parse(widget.idSurvey),widget.result, false);
+    var data = await repository.getPreviewReport(
+        widget.phone,
+        int.parse(widget.idProcedure),
+        int.parse(widget.idSurvey),
+        widget.result,
+        false);
 
     String base64StringFromAPI = data; // Substitua pelo seu base64
     List<int> bytes = base64.decode(base64StringFromAPI.replaceAll('"', ""));
@@ -57,7 +62,6 @@ class _ResultPreviewPageState extends State<ResultPreviewPage> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -73,17 +77,13 @@ class _ResultPreviewPageState extends State<ResultPreviewPage> {
       ),
       appBar: AppBar(),
       body: Zoom(
+        backgroundColor: Colors.white,
         child: Container(
-          width: 1.sw,
-          height: 1.sh,
           padding: const EdgeInsets.symmetric(horizontal: 20),
-          margin: const EdgeInsets.symmetric(vertical: 20),
-          child: SingleChildScrollView(
-            child: HtmlWidget(
-              widget.result,
-              renderMode: RenderMode.column,
-
-            ),
+          width: MediaQuery.of(context).size.width * .9,
+          child: HtmlWidget(
+            widget.result,
+            renderMode: RenderMode.column,
           ),
         ),
       ),

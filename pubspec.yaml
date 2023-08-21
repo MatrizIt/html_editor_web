@@ -58,6 +58,7 @@ dependencies:
   uuid: ^3.0.7
   flutter_downloader: ^1.11.1
   open_file: ^3.3.2
+  validatorless: ^1.2.3
 
 
 dev_dependencies:
