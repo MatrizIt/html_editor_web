@@ -39,7 +39,11 @@ class AppTextField extends StatefulWidget {
     required this.selectedOption,
     required this.isNotNull,
   }) {
+<<<<<<< HEAD
     RegExp exp = RegExp(r'!\*?*([^\(]+)\(([^\)]+)\)=?(.*?)?\*!');
+=======
+    RegExp exp = RegExp(r'!\*\*?([^\(]+)\(([^\)]+)\)=?(.*?)?\*!');
+>>>>>>> 36787c58ac0a7eae191a1a5d1b542d016e86c3e3
     RegExpMatch? match;
     String typeRecognized;
     try {

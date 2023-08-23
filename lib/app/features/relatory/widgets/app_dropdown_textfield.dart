@@ -35,7 +35,14 @@ class _AppDropdownTextfieldState extends State<AppDropdownTextfield> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Visibility(
-              replacement: Text(
+              replacement: widget.hintText == '' ? Text(
+                "Não informado",
+                style: GoogleFonts.inter(
+                    color: widget.isNotNull == true ? Colors.red : Colors.blue,
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold
+                ),
+              ) : Text(
                 widget.hintText,
                 style: GoogleFonts.inter(
                     color: widget.isNotNull == true ? Colors.red : Colors.blue,
@@ -59,13 +66,16 @@ class _AppDropdownTextfieldState extends State<AppDropdownTextfield> {
               child: const Icon(Icons.arrow_drop_down),
               itemBuilder: (context) =>
                   widget.options.map<PopupMenuItem>((option) {
+                    bool isSelected = widget.selectedOption == option;
+                    bool isNotNull = widget.isNotNull == true;
+
                     return PopupMenuItem(
                       value: option,
                       child: Text(
                         option,
                         style: GoogleFonts.inter(
-                          color: widget.selectedOption == option
-                              ? Colors.blue
+                          color: isSelected
+                              ? (isNotNull ? Colors.red : Colors.blue)
                               : Colors.black,
                         ),
                       ),
