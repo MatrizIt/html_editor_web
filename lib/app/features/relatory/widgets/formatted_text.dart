@@ -181,14 +181,14 @@ class _FormattedTextState extends State<FormattedText> {
 
   void changeScripFinalText(int scripIndex, String text) {
     final scrip = widget.scrips[scripIndex];
-    scrip.finalText = text;
+    scrip.finalText = "</br>$text";
     widget.scrips[scripIndex] = scrip;
   }
 
   @override
   Widget build(BuildContext context) {
     inlineWidgets = [];
-    bool _isTextFieldValid = true;
+    bool isValid = false;
     for (ScripModel scrip in widget.scrips) {
       final List<InlineSpan> inlineSpans = [];
       final title = scrip.title;
@@ -245,6 +245,7 @@ class _FormattedTextState extends State<FormattedText> {
               phraseCtrl = PhraseEditingController(
                 id: "${scrip.teachings[selectedTeaching].id}$index",
                 phrase: phrase,
+                isRequired: phrase.startsWith("!**"),
               );
               controllers.add(phraseCtrl);
             }
@@ -276,11 +277,12 @@ class _FormattedTextState extends State<FormattedText> {
                   ),
                 ),
               );
+
             } else {
               inlineSpans.add(
                 WidgetSpan(
                   child: SizedBox(
-                    height: 18,
+                    height: 20,
                     child: IntrinsicWidth(
                       child: AppTextField(
                         phrase: phrase,
@@ -345,8 +347,15 @@ class _FormattedTextState extends State<FormattedText> {
       floatingActionButton: FloatingActionButton(
         backgroundColor: const Color.fromRGBO(0, 160, 0, 100),
         onPressed: () {
-          if (_formKey.currentState?.validate() ?? false) {
-            generateText();
+          print("Valido ? $isValid");
+          bool canNavigate = true;
+          if (_formKey.currentState?.validate() ?? false ) {
+            for(var controller in controllers){
+              if(controller.isRequired && controller.text.isEmpty ){
+                canNavigate = false;
+              }
+            }
+            canNavigate ? generateText() : null;
           }
         },
         child: const Icon(
