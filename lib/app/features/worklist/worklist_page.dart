@@ -5,6 +5,7 @@ import 'package:reportpad/app/core/ui/extensions/size_extensions.dart';
 import 'package:reportpad/app/features/worklist/view/worklist_view.dart';
 import 'package:reportpad/app/repository/relatory/i_relatory_repository.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class WorklistPage extends StatefulWidget {
   final String phone;
@@ -18,17 +19,39 @@ class WorklistPage extends StatefulWidget {
 }
 
 class _WorklistPageState extends WorklistView<WorklistPage> {
+  late SharedPreferences _prefs;
+
   @override
   void initState() {
     super.initState();
     repository = Modular.get<IRelatoryRepository>();
     getSurveys(widget.phone);
+    initSharedPreferences();
+  }
+
+  void initSharedPreferences() async {
+    _prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _prefs.setBool("isTrust", _prefs.getBool('isChecked') ?? false);
+      print("Valor prefs > ${_prefs.getBool('isChecked')}");
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: const Color.fromRGBO(0, 160, 0, 100),
+        onPressed: () {
+          getSurveys(widget.phone);
+        },
+        child: const Icon(
+          Icons.refresh_outlined,
+          color: Colors.white,
+        ),
+      ),
       appBar: AppBar(
+
         title: Row(
           children: [
             Image.asset(

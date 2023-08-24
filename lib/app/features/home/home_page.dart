@@ -5,7 +5,7 @@ import 'package:reportpad/app/core/ui/extensions/size_extensions.dart';
 import 'package:reportpad/app/features/home/view/home_view.dart';
 import 'package:reportpad/app/repository/auth/i_auth_repository.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
-import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
@@ -18,15 +18,45 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends HomeView<HomePage> {
   final TextEditingController phoneCtrl = TextEditingController();
+  bool isChecked = false;
+  late SharedPreferences _prefs;
 
   @override
   void initState() {
     super.initState();
     repository = Modular.get<IAuthRepository>();
+    initSharedPreferences();
+
+  }
+
+  void initSharedPreferences() async {
+    _prefs = await SharedPreferences.getInstance();
+    setState(() {
+      isChecked = _prefs.getBool('isChecked') ?? false;
+      print("Valor prefs > ${_prefs.getBool('isChecked')}");
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    if(_prefs.getBool('isTrust') ?? false){
+      Modular.to.pushNamed(
+        '/worklist/',
+        arguments: _prefs.getString('phone') ?? "",
+      );
+    }
+    Color getColor(Set<MaterialState> states) {
+      const Set<MaterialState> interactiveStates = <MaterialState>{
+        MaterialState.pressed,
+        MaterialState.hovered,
+        MaterialState.focused,
+      };
+      if (states.any(interactiveStates.contains)) {
+        return Colors.blue;
+      }
+      return Colors.blue;
+    }
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(),
@@ -68,7 +98,24 @@ class _HomePageState extends HomeView<HomePage> {
                       onCountryChanged: (country) {
                         print('Country changed to: ' + country.name);
                       },
-                    )
+                    ),
+                    Row(
+                      children: [
+                        Checkbox(
+                          checkColor: Colors.white,
+                          fillColor: MaterialStateProperty.resolveWith(getColor),
+                          value: isChecked,
+                          onChanged: (value){
+                            setState(() {
+                              isChecked = value!;
+                            });
+                            _toggleCheckbox(isChecked);
+                          },
+                        ),
+                        const Text(
+                            'Confiar neste dispositivo e mantê-lo conectado?'),
+                      ],
+                    ),
                   ],
                 ),
               ),
@@ -116,6 +163,10 @@ class _HomePageState extends HomeView<HomePage> {
     );
   }
 
+  Future<void> _toggleCheckbox(bool value) async {
+    await _prefs.setBool('isChecked', value);
+  }
+
   void onSubmit(context) async {
     final phone = phoneCtrl.text
         .replaceAll("(", "")
@@ -124,6 +175,7 @@ class _HomePageState extends HomeView<HomePage> {
         .replaceAll(" ", "")
         .replaceAll("+", "");
     bool res = await sendPhone(phone);
+    _prefs.setString('phone', phone);
     if (res) {
       Modular.to.pushNamed('/validate_token/', arguments: phone);
       showTopSnackBar(

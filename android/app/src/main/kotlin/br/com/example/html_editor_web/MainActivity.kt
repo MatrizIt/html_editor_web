@@ -1,4 +1,4 @@
-package br.com.example.reportpad
+package br.com.reportmed
 
 import io.flutter.embedding.android.FlutterActivity
 

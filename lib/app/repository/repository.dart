@@ -18,7 +18,6 @@ class Repository {
     List<int> uint = utf8.encode(tokenToString);
 
     String token64 = base64.encode(uint);
-    print("TOKEN64: $token64");
     return token64;
   }
 
@@ -32,9 +31,6 @@ class Repository {
           token,
         ),
       );
-      print("RESPONSE: ${response.body}");
-      /*print("RESPONSE STATUS CODE> ${response.statusCode}");
-      print("RESPONSE> ${response.body}");*/
       return ResponseModel.fromHttp(response);
     } catch (e, s) {
       log(

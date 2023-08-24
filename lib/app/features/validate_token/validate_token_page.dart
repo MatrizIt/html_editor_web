@@ -35,7 +35,6 @@ class _ValidateTokenPageState extends ValidateTokenView<ValidateTokenPage> {
   }
 
   onSendToken() async {
-    print("Olá Mundo");
     await sendToken(pinCtrl.text);
   }
 
