@@ -21,7 +21,7 @@ class _ExpandableContainerState extends State<ExpandableContainer> {
   bool isExpanded = false;
   Image? _image;
 
-  _convertImage(){
+  _convertImage() {
     setState(() {
       List<int> bytes = base64Decode(widget.imageList[0].bytes);
       _image = Image.memory(Uint8List.fromList(bytes));
@@ -30,7 +30,6 @@ class _ExpandableContainerState extends State<ExpandableContainer> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _convertImage();
   }
@@ -67,13 +66,13 @@ class _ExpandableContainerState extends State<ExpandableContainer> {
             borderRadius: BorderRadius.circular(_radius),
             child: widget.imageList[0].nameFile != "No such file"
                 ? Image.memory(
-              base64Decode(widget.imageList[0].bytes),
-              fit: BoxFit.cover,
-            )
+                    base64Decode(widget.imageList[0].bytes),
+                    fit: BoxFit.cover,
+                  )
                 : Image.asset(
-              "assets/images/no-image.jpg",
-              fit: BoxFit.cover,
-            ),
+                    "assets/images/no-image.jpg",
+                    fit: BoxFit.cover,
+                  ),
           ),
           child: ImageSnapping(imageList: widget.imageList),
         ),

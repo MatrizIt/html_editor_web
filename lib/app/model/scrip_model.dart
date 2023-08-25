@@ -36,8 +36,8 @@ class ScripModel {
 
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
       'titulo': {
+        'id': id,
         'titulo': title,
       },
       'ensinamentos': teachings.map((teaching) => teaching.toMap()).toList(),

@@ -8,8 +8,11 @@ import 'package:reportpad/app/core/ui/helpers/pdf_helper.dart';
 import 'package:reportpad/app/features/relatory/widgets/app_text_field.dart';
 import 'package:reportpad/app/core/ui/helpers/phrase_editing_controller.dart';
 import 'package:reportpad/app/features/relatory/widgets/title_content.dart';
+import 'package:reportpad/app/model/document_generated_model.dart';
 import 'package:reportpad/app/model/teaching_model.dart';
+import 'package:reportpad/app/model/topic_model.dart';
 import 'package:reportpad/app/repository/relatory/i_relatory_repository.dart';
+import 'package:reportpad/app/repository/relatory/relatory_repository.dart';
 import '../../../core/ui/helpers/scrip_final_text.dart';
 import '../../../model/scrip_model.dart';
 
@@ -46,73 +49,76 @@ class _FormattedTextState extends State<FormattedText> {
     repository = Modular.get<IRelatoryRepository>();
   }
 
-  String mountText() {
-    String text = "";
+  void mountText() {
+    List<TopicModel> topics = [];
 
     for (var scrip in widget.scrips) {
-      text += "<b>${scrip.title}</b></br>";
-      if (scrip.teachings.isNotEmpty) {
-        for (int selectedTeaching in scrip.selectedTeachings) {
-          text += scrip.getTeachingText(selectedTeaching);
-        }
-        text += "&nbsp;${scrip.finalText}</br>";
-      }
-      final scripsAux = widget.scrips.map<ScripModel?>((s) {
-        if (s != scrip) return s;
-        return null;
-      }).toList();
-      for (ScripModel? anotherScrip in scripsAux) {
-        anotherScrip?.teachings.forEach((teaching) {
-          if (anotherScrip.selectedTeachings
-              .contains(anotherScrip.teachings.indexOf(teaching))) {
-            teaching.gatilhos?.forEach((gatilho) {
-              print("Gatilho dentro do for ${gatilho.idScrip} + ${scrip.id}");
-              if (gatilho.idScrip == scrip.id) {
-                print("Gatilho add > ${gatilho.teachingText}");
-                text += "\n${gatilho.teachingText}";
-                print("TEXTO CONTAINS: ${text.contains(gatilho.teachingText)}");
-              }
-            });
+      if (scrip.isVisible) {
+        String title = scrip.title;
+        String text = "";
+        if (scrip.teachings.isNotEmpty) {
+          for (int selectedTeaching in scrip.selectedTeachings) {
+            text += scrip.getTeachingText(selectedTeaching);
           }
-        });
-      }
-      for (int i = 0; i <= scrip.leading; i++) {
-        text += "</br>";
+          text += "&nbsp;${scrip.finalText}</br>";
+        }
+        final scripsAux = widget.scrips.map<ScripModel?>((s) {
+          if (s != scrip) return s;
+          return null;
+        }).toList();
+        for (ScripModel? anotherScrip in scripsAux) {
+          anotherScrip?.teachings.forEach((teaching) {
+            if (anotherScrip.selectedTeachings
+                .contains(anotherScrip.teachings.indexOf(teaching))) {
+              teaching.gatilhos?.forEach((gatilho) {
+                if (gatilho.idScrip == scrip.id) {
+                  text += "\n${gatilho.teachingText}";
+                }
+              });
+            }
+          });
+        }
+        for (int i = 0; i <= scrip.leading; i++) {
+          text += "</br>";
+        }
+        String parsedText = parseText(text);
+        topics.add(TopicModel(topic: title, text: parsedText));
       }
     }
-    return text;
+    sendDocument(topics);
   }
 
-  void generateText() async {
-    String text = mountText();
+  Future<void> sendDocument(List<TopicModel> topics) async {
+    final document = DocumentGeneratedModel(
+      topics: topics,
+      html: 0,
+      idProcedure: int.tryParse(widget.idProcedure) ?? 0,
+      idSurvey: int.tryParse(widget.idSurvey) ?? 0,
+      pdf: true,
+    );
+
+    final repository = RelatoryRepository();
+
+    await repository.sendDocument(document);
+  }
+
+  String parseText(String text) {
     var regXP = RegExp(r"\[\[(.*?)\]\]");
-
-    for (ScripModel scrip in widget.scrips) {
-      if (!scrip.isVisible) {
-        text = text.replaceAll(scrip.title, "");
-        for (int selectedTeaching in scrip.selectedTeachings) {
-          text = text.replaceAll(scrip.teachings[selectedTeaching].text, "");
-        }
-      }
-    }
-
+    String parsedText = text;
     for (PhraseEditingController controller in controllers) {
-      text = text.replaceFirst(
+      parsedText = parsedText.replaceFirst(
         controller.phrase,
         controller.text.isEmpty
             ? controller.defaultValue ?? "!**"
             : controller.text,
       );
     }
-    //text = text.replaceAll(RegExp(r"!\*.+\(.*?.*?\)=.*?\*!"), "");
 
     for (var match in regXP.allMatches(text)) {
       var textMatch = match.group(0);
-      print("Match > ${textMatch}");
       if ((textMatch?.contains("!*") ?? false) ||
           (textMatch?.contains("!**") ?? false)) {
-        print("Existe > ${textMatch?.contains("!*")}");
-        text = text.replaceAll("$textMatch", "");
+        parsedText = parsedText.replaceAll("$textMatch", "");
       }
     }
 
@@ -120,13 +126,14 @@ class _FormattedTextState extends State<FormattedText> {
       var textMatch = match.group(0);
 
       if (textMatch?.contains("[[") ?? false) {
-        text = text.replaceAll("[[", "");
-        text = text.replaceAll("]]", "");
+        parsedText = parsedText.replaceAll("[[", "");
+        parsedText = parsedText.replaceAll("]]", "");
       }
     }
 
-    text = text.replaceAll(RegExp(r"!\*.*?\*!"), "");
-    text = text.replaceAll("!**", "");
+    parsedText = parsedText.replaceAll(RegExp(r"!\*.*?\*!"), "");
+    parsedText = parsedText.replaceAll("!**", "");
+    return parsedText;
     /*var data = await repository.getPreviewReport(widget.phone, int.parse(widget.idProcedure),int.parse(widget.idSurvey),text, false);
 
     String base64StringFromAPI = data; // Substitua pelo seu base64
@@ -143,26 +150,23 @@ class _FormattedTextState extends State<FormattedText> {
       print(e);
     }*/
     //log("Texto > ${text}");
-    var data = await repository.getPreviewReport(
-        widget.phone,
-        int.parse(widget.idProcedure),
-        int.parse(widget.idSurvey),
-        text,
-        false);
 
-    String base64StringFromAPI = data; // Substitua pelo seu base64
-    List<int> bytes = base64.decode(base64StringFromAPI.replaceAll('"', ""));
+    // var data = await repository.getPreviewReport(widget.phone,
+    //     int.parse(widget.idProcedure), int.parse(widget.idSurvey), text, false);
 
-    var directory = await getExternalStorageDirectory();
-    String docxFilePath = '${directory?.path}/reportPad.docx';
+    // String base64StringFromAPI = data; // Substitua pelo seu base64
+    // List<int> bytes = base64.decode(base64StringFromAPI.replaceAll('"', ""));
 
-    try {
-      File docxFile = await File(docxFilePath).writeAsBytes(bytes);
+    // var directory = await getExternalStorageDirectory();
+    // String docxFilePath = '${directory?.path}/reportPad.docx';
 
-      OpenFile.open(docxFile.path.substring(1, docxFile.path.length));
-    } catch (e) {
-      print(e);
-    }
+    // try {
+    //   File docxFile = await File(docxFilePath).writeAsBytes(bytes);
+
+    //   OpenFile.open(docxFile.path.substring(1, docxFile.path.length));
+    // } catch (e) {
+    //   print(e);
+    // }
 
     /*Modular.to.pushNamed(
       '/result_preview/',
@@ -175,9 +179,7 @@ class _FormattedTextState extends State<FormattedText> {
     );*/
   }
 
-  void generateDocu() async {
-
-  }
+  void generateDocu() async {}
 
   void changeScripVisibility(int index) {
     final scrip = widget.scrips[index];
@@ -302,7 +304,6 @@ class _FormattedTextState extends State<FormattedText> {
                   ),
                 ),
               );
-
             } else {
               inlineSpans.add(
                 WidgetSpan(
@@ -374,13 +375,15 @@ class _FormattedTextState extends State<FormattedText> {
         onPressed: () {
           print("Valido ? $isValid");
           bool canNavigate = true;
-          if (_formKey.currentState?.validate() ?? false ) {
-            for(var controller in controllers){
-              if(controller.isRequired && controller.text.isEmpty ){
-                canNavigate = false;
+          print(_formKey.currentState?.validate());
+          if (_formKey.currentState?.validate() ?? false) {
+            for (var controller in controllers) {
+              if (controller.isRequired && controller.text.isEmpty) {
+                //canNavigate = false;
               }
             }
-            canNavigate ? generateText() : null;
+            print(canNavigate);
+            canNavigate ? mountText() : null;
           }
         },
         child: const Icon(

@@ -15,8 +15,8 @@ class RelatoryPage extends StatefulWidget {
   final List<ScripModel> scrips;
   final String title;
   final String idSurvey;
-  final String phone;
   final String idProcedure;
+  final String phone;
   final List<ImageFtpModel> imageList;
   const RelatoryPage(
       {super.key,
@@ -41,8 +41,6 @@ class _RelatoryPageState extends RelatoryView<RelatoryPage> {
     // TODO: implement initState
     super.initState();
   }
-
-
 
   @override
   Widget build(BuildContext context) {

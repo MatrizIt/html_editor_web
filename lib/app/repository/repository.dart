@@ -21,7 +21,9 @@ class Repository {
     return token64;
   }
 
-  Future<ResponseModel?> get(String path, [Map<String, dynamic>? data]) async {
+  Future<ResponseModel?> get(
+    String path,
+  ) async {
     try {
       final token = generateAuthorizationToken();
       print("TOKEN: $token");
@@ -30,6 +32,28 @@ class Repository {
         headers: getHeaders(
           token,
         ),
+      );
+      return ResponseModel.fromHttp(response);
+    } catch (e, s) {
+      log(
+        "Erro ao efetuar requisição",
+        error: e,
+        stackTrace: s,
+      );
+      return null;
+    }
+  }
+
+  Future<ResponseModel?> post(String path, [Map<String, dynamic>? data]) async {
+    try {
+      final token = generateAuthorizationToken();
+      print("TOKEN: $token");
+      var response = await http.post(
+        Uri.parse("https://dcore.report-med.com/api/$path"),
+        headers: getHeaders(
+          token,
+        ),
+        body: data,
       );
       return ResponseModel.fromHttp(response);
     } catch (e, s) {
