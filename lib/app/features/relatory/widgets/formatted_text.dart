@@ -90,16 +90,31 @@ class _FormattedTextState extends State<FormattedText> {
 
   Future<void> sendDocument(List<TopicModel> topics) async {
     final document = DocumentGeneratedModel(
+      key: widget.phone,
       topics: topics,
-      html: 0,
+      html: "",
       idProcedure: int.tryParse(widget.idProcedure) ?? 0,
       idSurvey: int.tryParse(widget.idSurvey) ?? 0,
-      pdf: true,
+      pdf: false,
     );
 
     final repository = RelatoryRepository();
 
-    await repository.sendDocument(document);
+    var data = await repository.sendDocument(document);
+
+    String base64StringFromAPI = data; // Substitua pelo seu base64
+    List<int> bytes = base64.decode(base64StringFromAPI.replaceAll('"', ""));
+
+    var directory = await getExternalStorageDirectory();
+    String docxFilePath = '${directory?.path}/arquivo.docx';
+
+    try {
+      File docxFile = await File(docxFilePath).writeAsBytes(bytes);
+
+      OpenFile.open(docxFile.path.substring(1, docxFile.path.length));
+    } catch (e) {
+      print(e);
+    }
   }
 
   String parseText(String text) {

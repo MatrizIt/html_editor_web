@@ -25,7 +25,7 @@ class RelatoryRepository extends IRelatoryRepository {
   }
 
   String getDatetime() {
-    return DateFormat("yyyy-MM-dd").format(DateTime.parse("2023-08-18"));
+    return DateFormat("yyyy-MM-dd").format(DateTime.now());
   }
 
   @override
@@ -72,9 +72,14 @@ class RelatoryRepository extends IRelatoryRepository {
   }
 
   @override
-  Future<void> sendDocument(DocumentGeneratedModel document) async {
-    document.key = phone;
+  Future<dynamic> sendDocument(DocumentGeneratedModel document) async {
+    try{
+      log("body ${document.toJson()}");
+      var response = await post("PreviewReport?", document.toJson());
 
-    await post("URL", document.toMap());
+      return response?.data;
+    }catch(e){
+      log(" Error > $e");
+    }
   }
 }

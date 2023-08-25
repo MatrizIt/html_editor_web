@@ -3,10 +3,10 @@ import 'dart:convert';
 import 'package:reportpad/app/model/topic_model.dart';
 
 class DocumentGeneratedModel {
-  String? key;
+  final String key;
   final int idProcedure;
   final int idSurvey;
-  final int html;
+  final String html;
   final bool pdf;
   final List<TopicModel> topics;
 
@@ -15,18 +15,19 @@ class DocumentGeneratedModel {
     required this.html,
     required this.idProcedure,
     required this.idSurvey,
-    this.key,
+    required this.key,
     required this.pdf,
   });
 
   Map<String, dynamic> toMap() {
     return {
-      'key': key,
-      'idProcedure': idProcedure,
-      'idSurvey': idSurvey,
+      'chave': key,
+      'idProcedimento': idProcedure,
+      'idAgendamento': idSurvey,
       'html': html,
+      'convenio': 0,
       'pdf': pdf,
-      'topics': topics.map((topic) => topic.toMap()).toList(),
+      'topicos': topics.map((topic) => topic.toMap()).toList(),
     };
   }
 

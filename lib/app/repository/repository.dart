@@ -44,7 +44,7 @@ class Repository {
     }
   }
 
-  Future<ResponseModel?> post(String path, [Map<String, dynamic>? data]) async {
+  Future<ResponseModel?> post(String path, Object? data) async {
     try {
       final token = generateAuthorizationToken();
       print("TOKEN: $token");
