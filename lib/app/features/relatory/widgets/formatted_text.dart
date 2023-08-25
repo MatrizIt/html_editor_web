@@ -142,8 +142,29 @@ class _FormattedTextState extends State<FormattedText> {
     } catch (e) {
       print(e);
     }*/
+    //log("Texto > ${text}");
+    var data = await repository.getPreviewReport(
+        widget.phone,
+        int.parse(widget.idProcedure),
+        int.parse(widget.idSurvey),
+        text,
+        false);
 
-    Modular.to.pushNamed(
+    String base64StringFromAPI = data; // Substitua pelo seu base64
+    List<int> bytes = base64.decode(base64StringFromAPI.replaceAll('"', ""));
+
+    var directory = await getExternalStorageDirectory();
+    String docxFilePath = '${directory?.path}/reportPad.docx';
+
+    try {
+      File docxFile = await File(docxFilePath).writeAsBytes(bytes);
+
+      OpenFile.open(docxFile.path.substring(1, docxFile.path.length));
+    } catch (e) {
+      print(e);
+    }
+
+    /*Modular.to.pushNamed(
       '/result_preview/',
       arguments: {
         "result": text,
@@ -151,7 +172,11 @@ class _FormattedTextState extends State<FormattedText> {
         "phone": widget.phone,
         "idSurvey": widget.idSurvey
       },
-    );
+    );*/
+  }
+
+  void generateDocu() async {
+
   }
 
   void changeScripVisibility(int index) {
@@ -359,7 +384,7 @@ class _FormattedTextState extends State<FormattedText> {
           }
         },
         child: const Icon(
-          Icons.send,
+          Icons.document_scanner_sharp,
           color: Colors.white,
         ),
       ),

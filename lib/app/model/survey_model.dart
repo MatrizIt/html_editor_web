@@ -11,6 +11,8 @@ class SurveyModel {
   final DateTime scheduleDate;
   final String doctor;
   final String requesterName;
+  final String patientId;
+  final String studyId;
 
   SurveyModel({
     required this.id,
@@ -22,6 +24,8 @@ class SurveyModel {
     required this.scheduleDate,
     required this.doctor,
     required this.requesterName,
+    required this.patientId,
+    required this.studyId
   });
 
   Map<String, dynamic> toMap() {
@@ -35,6 +39,8 @@ class SurveyModel {
       'dataExane': DateFormat("yyyy-MM-ddTHH:mm:ss").format(scheduleDate),
       'nomeRealizador': doctor,
       'nomeSolicitante': requesterName,
+      'numeroRegistro': patientId,
+      'studyId': studyId
     };
   }
 
@@ -52,6 +58,8 @@ class SurveyModel {
             DateTime.now(),
         doctor: map['nomeRealizador'] ?? '',
         requesterName: map['nomeSolicitante'] ?? '',
+        patientId: map['numeroRegistro'] ?? '',
+        studyId: map['studyId'] ?? ''
       );
     } catch (e, s) {
       print("Erro: $e, stackTrace: $s");

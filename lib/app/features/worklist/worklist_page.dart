@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:reportpad/app/core/ui/extensions/size_extensions.dart';
+import 'package:reportpad/app/core/ui/helpers/version_widget.dart';
 import 'package:reportpad/app/features/worklist/view/worklist_view.dart';
 import 'package:reportpad/app/repository/relatory/i_relatory_repository.dart';
 import 'package:intl/intl.dart';
@@ -71,82 +72,95 @@ class _WorklistPageState extends WorklistView<WorklistPage> {
           ],
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 20),
-        child: Visibility(
-          visible: isLoading == false,
-          replacement: const Center(
-            child: CircularProgressIndicator(),
-          ),
-          child: ListView.separated(
-            separatorBuilder: (context, index) {
-              return const SizedBox(
-                height: 10,
-              );
-            },
-            itemCount: worklist.length,
-            itemBuilder: (context, index) {
-              worklist.sort((a, b) => a.scheduleDate.compareTo(b.scheduleDate));
-              final survey = worklist[index];
-              final hour = DateFormat("Hm").format(survey.scheduleDate);
-              return Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: GestureDetector(
-                  onTap: () {
-                    print("Survey > ${survey.id}");
-
-                    getScrips(survey.id.toString(), survey.procedureName, widget.phone, survey.idProcedure.toString());
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 20),
+            child: Visibility(
+              visible: isLoading == false,
+              replacement: const Center(
+                child: CircularProgressIndicator(),
+              ),
+              child: SizedBox(
+                height: MediaQuery.sizeOf(context).height * 0.8,
+                child: ListView.separated(
+                  separatorBuilder: (context, index) {
+                    return const SizedBox(
+                      height: 10,
+                    );
                   },
-                  child: Container(
-                    width: .85.sw,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 15,
-                    ),
-                    decoration: BoxDecoration(
-                      color: const Color.fromRGBO(1, 134, 167,100),
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(
-                        color: Colors.black,
-                        width: 1,
-                      ),
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(survey.procedureName, style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold
-                        ),),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(hour,style: const TextStyle(
+                  itemCount: worklist.length,
+                  itemBuilder: (context, index) {
+                    worklist.sort((a, b) => a.scheduleDate.compareTo(b.scheduleDate));
+                    final survey = worklist[index];
+                    final hour = DateFormat("Hm").format(survey.scheduleDate);
+                    return Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: GestureDetector(
+                        onTap: () {
+                          print("Survey > ${survey.id}");
+
+                          getScrips(survey.id.toString(), survey.procedureName, widget.phone, survey.idProcedure.toString(), survey.patientId, survey.studyId);
+
+                        },
+                        child: Container(
+                          width: .85.sw,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 20,
+                            vertical: 15,
+                          ),
+                          decoration: BoxDecoration(
+                            color: const Color.fromRGBO(1, 134, 167,100),
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(
+                              color: Colors.black,
+                              width: 1,
+                            ),
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(survey.procedureName, style: const TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.bold
-                            ),),
+                              ),),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(hour,style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold
+                                  ),),
 
-                            Text(
-                                "Paciente: ${survey.patient}"),
-                            const Text(""),
-                            const Text(""),
-                          ],
+                                  Text(
+                                      "Paciente: ${survey.patient}"),
+                                  const Text(""),
+                                  const Text(""),
+                                ],
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              Text(survey.healthInsuranceName, textAlign: TextAlign.center,)
+                            ],
+                          ),
                         ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        Text(survey.healthInsuranceName, textAlign: TextAlign.center,)
-                      ],
-                    ),
-                  ),
+                      ),
+                    );
+                  },
                 ),
-              );
-            },
+              ),
+            ),
           ),
-        ),
+          Spacer(),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: VersionWidget(),
+          ),
+        ],
       ),
     );
   }

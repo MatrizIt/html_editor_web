@@ -1,3 +1,4 @@
+import 'package:reportpad/app/model/image_ftp_model.dart';
 import 'package:reportpad/app/model/teaching_model.dart';
 import 'package:reportpad/app/repository/repository.dart';
 
@@ -9,4 +10,6 @@ abstract class IRelatoryRepository extends Repository {
   Future<List<ScripModel>> getScrips(String idSurvey);
   Future<TeachingModel> getTeachings(String idTeaching, String idSurvey);
   Future<dynamic> getPreviewReport(String phone, int idProcedure, int idSurvey, String html, bool isPDF);
+  Future<List<ImageFtpModel>>getImagesFtp(String phone, String studyId, String patientId);
+
 }

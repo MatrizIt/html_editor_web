@@ -1,5 +1,6 @@
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:reportpad/app/features/relatory/relatory_page.dart';
+import 'package:reportpad/app/model/image_ftp_model.dart';
 import 'package:reportpad/app/model/scrip_model.dart';
 
 class RelatoryModule extends Module {
@@ -23,12 +24,15 @@ class RelatoryModule extends Module {
 
         final String idProcedure = routeArgs['procedure'] ?? "";
 
+        final List<ImageFtpModel> imageList = routeArgs['imageList'] ?? [];
+
         return RelatoryPage(
           scrips: scrips,
           title: title,
           idSurvey: idSurvey,
           phone: phone,
           idProcedure: idProcedure,
+          imageList: imageList,
         );
       },
     );

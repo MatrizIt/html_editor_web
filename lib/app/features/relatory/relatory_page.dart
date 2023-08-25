@@ -1,7 +1,12 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:reportpad/app/features/relatory/view/relatory_view.dart';
 import 'package:reportpad/app/features/relatory/widgets/expandable_container.dart';
 import 'package:reportpad/app/features/relatory/widgets/formatted_text.dart';
+import 'package:reportpad/app/model/image_ftp_model.dart';
+import 'package:reportpad/app/repository/relatory/i_relatory_repository.dart';
 
 import '../../core/ui/helpers/phrase_editing_controller.dart';
 import '../../model/scrip_model.dart';
@@ -12,13 +17,15 @@ class RelatoryPage extends StatefulWidget {
   final String idSurvey;
   final String phone;
   final String idProcedure;
+  final List<ImageFtpModel> imageList;
   const RelatoryPage(
       {super.key,
       required this.scrips,
       required this.title,
       required this.idSurvey,
       required this.phone,
-      required this.idProcedure});
+      required this.idProcedure,
+      required this.imageList});
 
   @override
   State<RelatoryPage> createState() => _RelatoryPageState();
@@ -26,8 +33,16 @@ class RelatoryPage extends StatefulWidget {
 
 class _RelatoryPageState extends RelatoryView<RelatoryPage> {
   String result = '';
-
+  late final IRelatoryRepository repository;
   final List<PhraseEditingController> controllers = [];
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -61,10 +76,10 @@ class _RelatoryPageState extends RelatoryView<RelatoryPage> {
               },
             ),
           ),
-          const Positioned(
+          Positioned(
             right: 15,
             bottom: 80,
-            child: ExpandableContainer(),
+            child: ExpandableContainer(imageList: widget.imageList),
           ),
         ],
       ),

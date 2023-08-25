@@ -1,11 +1,16 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:reportpad/app/model/image_ftp_model.dart';
 
 class ImageSnapping extends StatefulWidget {
   final bool favorite;
-  const ImageSnapping({super.key}) : favorite = false;
+  final List<ImageFtpModel> imageList;
+  const ImageSnapping({super.key, required this.imageList}) : favorite = false;
 
-  const ImageSnapping.favorite({super.key}) : favorite = true;
+  const ImageSnapping.favorite({super.key, required this.imageList})
+      : favorite = true;
 
   @override
   State<ImageSnapping> createState() => _ImageSnappingState();
@@ -32,12 +37,17 @@ class _ImageSnappingState extends State<ImageSnapping> {
                 selectedImg = value;
               });
             },
-            itemCount: 5,
+            itemCount: widget.imageList.isEmpty ? 1 : widget.imageList.length,
             itemBuilder: (context, index) {
-              return Image.asset(
-                'assets/images/barber.png',
-                fit: BoxFit.cover,
-              );
+              return widget.imageList[0].nameFile != "No such file"
+                  ? Image.memory(
+                      base64Decode(widget.imageList[index].bytes),
+                      fit: BoxFit.cover,
+                    )
+                  : Image.asset(
+                      "assets/images/no-image.jpg",
+                      fit: BoxFit.cover,
+                    );
             },
           ),
           Align(
@@ -52,7 +62,7 @@ class _ImageSnappingState extends State<ImageSnapping> {
                     width: 5,
                   );
                 },
-                itemCount: 5,
+                itemCount: widget.imageList.isEmpty ? 1 : widget.imageList.length,
                 scrollDirection: Axis.horizontal,
                 itemBuilder: (context, index) {
                   return Container(

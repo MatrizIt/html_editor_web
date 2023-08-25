@@ -1,6 +1,8 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:reportpad/app/model/image_ftp_model.dart';
 import 'package:reportpad/app/model/scrip_model.dart';
 import 'package:reportpad/app/model/survey_model.dart';
 import 'package:reportpad/app/model/teaching_model.dart';
@@ -22,7 +24,7 @@ class RelatoryRepository extends IRelatoryRepository {
   }
 
   String getDatetime() {
-    return DateFormat("yyyy-MM-dd").format(DateTime.parse("2023-08-21"));
+    return DateFormat("yyyy-MM-dd").format(DateTime.parse("2023-08-18"));
   }
 
   @override
@@ -52,5 +54,16 @@ class RelatoryRepository extends IRelatoryRepository {
         "PreviewReport?chave=$phone&idProcedimento=$idProcedure&idAgendamento=$idSurvey&html=$finalHTML&pdf=$isPDF");
 
     return response?.data;
+  }
+
+  @override
+   Future<List<ImageFtpModel>>getImagesFtp(String phone, String studyId, String patientId) async{
+      var response = await get("PegarImagensFtp?Chave=$phone&StudyId=$studyId&PacienteID=$patientId");
+
+      print("URL > PegarImagensFtp?Chave=$phone&StudyId=$studyId&PacienteID=$patientId");
+
+      return (jsonDecode(response?.data) as List)
+          .map<ImageFtpModel>((image) => ImageFtpModel.fromMap(image))
+          .toList();
   }
 }

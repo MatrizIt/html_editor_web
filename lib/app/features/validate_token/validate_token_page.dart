@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:reportpad/app/core/ui/extensions/size_extensions.dart';
+import 'package:reportpad/app/core/ui/helpers/version_widget.dart';
 import 'package:reportpad/app/features/validate_token/view/validate_token_view.dart';
 import 'package:reportpad/app/repository/auth/i_auth_repository.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
@@ -170,7 +171,7 @@ class _ValidateTokenPageState extends ValidateTokenView<ValidateTokenPage> {
                   const SizedBox(
                     height: 10,
                   ),
-                  const Text("V1.0.2"),
+                  VersionWidget(),
                 ],
               ),
             ],

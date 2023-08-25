@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:reportpad/app/model/survey_model.dart';
@@ -19,9 +21,13 @@ abstract class WorklistView<T extends StatefulWidget> extends State<T> {
     });
   }
 
-  Future<void> getScrips(String idSurvey, String title, String phone, String idProcedure) async {
+  Future<void> getScrips(String idSurvey, String title, String phone, String idProcedure, String patientId, String studyId) async {
     final scrips = await repository.getScrips(idSurvey);
+    final imagesFTP = await repository.getImagesFtp(phone, studyId, patientId);
+    log("Images > ${imagesFTP[0].bytes}");
+
     Modular.to.pushNamed('/relatory',
-        arguments: {'Scrips': scrips, 'Title': title, 'idSurvey': idSurvey, 'phone': phone, 'procedure': idProcedure});
+        arguments: {'Scrips': scrips, 'Title': title, 'idSurvey': idSurvey, 'phone': phone, 'procedure': idProcedure, 'patientId': patientId, 'studyId':studyId,  'imageList' : imagesFTP},);
   }
+
 }

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:reportpad/app/core/ui/extensions/size_extensions.dart';
+import 'package:reportpad/app/core/ui/helpers/version_widget.dart';
 import 'package:reportpad/app/features/home/view/home_view.dart';
 import 'package:reportpad/app/repository/auth/i_auth_repository.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
@@ -26,8 +28,8 @@ class _HomePageState extends HomeView<HomePage> {
     super.initState();
     repository = Modular.get<IAuthRepository>();
     initSharedPreferences();
-
   }
+
 
   void initSharedPreferences() async {
     _prefs = await SharedPreferences.getInstance();
@@ -39,7 +41,7 @@ class _HomePageState extends HomeView<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    if(_prefs.getBool('isTrust') ?? false){
+    if (_prefs.getBool('isTrust') ?? false) {
       Modular.to.pushNamed(
         '/worklist/',
         arguments: _prefs.getString('phone') ?? "",
@@ -103,17 +105,21 @@ class _HomePageState extends HomeView<HomePage> {
                       children: [
                         Checkbox(
                           checkColor: Colors.white,
-                          fillColor: MaterialStateProperty.resolveWith(getColor),
+                          fillColor:
+                              MaterialStateProperty.resolveWith(getColor),
                           value: isChecked,
-                          onChanged: (value){
+                          onChanged: (value) {
                             setState(() {
                               isChecked = value!;
                             });
                             _toggleCheckbox(isChecked);
                           },
                         ),
-                        const Text(
-                            'Confiar neste dispositivo e mantê-lo conectado?'),
+                        const Flexible(
+                          child: Text(
+                              'Confiar neste dispositivo e mantê-lo conectado?',
+                              overflow: TextOverflow.visible),
+                        ),
                       ],
                     ),
                   ],
@@ -153,7 +159,7 @@ class _HomePageState extends HomeView<HomePage> {
                   const SizedBox(
                     height: 10,
                   ),
-                  const Text("V1.0.11"),
+                  VersionWidget(),
                 ],
               ),
             ],
