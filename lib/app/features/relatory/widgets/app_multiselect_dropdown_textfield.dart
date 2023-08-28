@@ -56,6 +56,7 @@ class _AppMultiselectDropdownTextfieldState
                 style: GoogleFonts.inter(
                   color: widget.isNotNull == true ? Colors.red : Colors.blue,
                   fontSize: 12,
+                  fontWeight: FontWeight.bold
                 ),
               ),
               visible: widget.selectedOptions != null &&

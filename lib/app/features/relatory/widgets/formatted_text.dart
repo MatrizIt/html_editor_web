@@ -42,6 +42,7 @@ class _FormattedTextState extends State<FormattedText> {
   late final IRelatoryRepository repository;
   bool isNotNull = true;
   final _formKey = GlobalKey<FormState>();
+  bool changedText = false;
 
   @override
   void initState() {
@@ -70,8 +71,10 @@ class _FormattedTextState extends State<FormattedText> {
           anotherScrip?.teachings.forEach((teaching) {
             if (anotherScrip.selectedTeachings
                 .contains(anotherScrip.teachings.indexOf(teaching))) {
+              text.replaceAll(scrip.teachings[0].text,"");
               teaching.gatilhos?.forEach((gatilho) {
                 if (gatilho.idScrip == scrip.id) {
+
                   text += "\n${gatilho.teachingText}";
                 }
               });
@@ -194,7 +197,6 @@ class _FormattedTextState extends State<FormattedText> {
     );*/
   }
 
-  void generateDocu() async {}
 
   void changeScripVisibility(int index) {
     final scrip = widget.scrips[index];
@@ -223,7 +225,7 @@ class _FormattedTextState extends State<FormattedText> {
 
   void changeScripFinalText(int scripIndex, String text) {
     final scrip = widget.scrips[scripIndex];
-    scrip.finalText = "</br>$text";
+    scrip.finalText = "<div>$text</div>";
     widget.scrips[scripIndex] = scrip;
   }
 
