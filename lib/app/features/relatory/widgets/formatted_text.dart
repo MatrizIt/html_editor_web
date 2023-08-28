@@ -1,18 +1,21 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:reportpad/app/core/ui/helpers/pdf_helper.dart';
-import 'package:reportpad/app/features/relatory/widgets/app_text_field.dart';
+import 'package:reportpad/app/core/ui/helpers/messages.dart';
 import 'package:reportpad/app/core/ui/helpers/phrase_editing_controller.dart';
+import 'package:reportpad/app/features/relatory/widgets/app_text_field.dart';
 import 'package:reportpad/app/features/relatory/widgets/title_content.dart';
 import 'package:reportpad/app/model/document_generated_model.dart';
 import 'package:reportpad/app/model/teaching_model.dart';
 import 'package:reportpad/app/model/topic_model.dart';
 import 'package:reportpad/app/repository/relatory/i_relatory_repository.dart';
 import 'package:reportpad/app/repository/relatory/relatory_repository.dart';
+
 import '../../../core/ui/helpers/scrip_final_text.dart';
 import '../../../model/scrip_model.dart';
 
@@ -35,7 +38,7 @@ class FormattedText extends StatefulWidget {
   State<FormattedText> createState() => _FormattedTextState();
 }
 
-class _FormattedTextState extends State<FormattedText> {
+class _FormattedTextState extends State<FormattedText> with Messages<FormattedText>{
   final List<PhraseEditingController> controllers = [];
   List<TitleContent> inlineWidgets = [];
   List<TeachingFinalText> teachingFinalTexts = [];
@@ -43,6 +46,7 @@ class _FormattedTextState extends State<FormattedText> {
   bool isNotNull = true;
   final _formKey = GlobalKey<FormState>();
   bool changedText = false;
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -61,7 +65,7 @@ class _FormattedTextState extends State<FormattedText> {
           for (int selectedTeaching in scrip.selectedTeachings) {
             text += scrip.getTeachingText(selectedTeaching);
           }
-          text += "&nbsp;${scrip.finalText}</br>";
+          text += "&nbsp;${scrip.finalText}";
         }
         final scripsAux = widget.scrips.map<ScripModel?>((s) {
           if (s != scrip) return s;
@@ -83,13 +87,16 @@ class _FormattedTextState extends State<FormattedText> {
           text += "</br>";
         }
         String parsedText = parseText(text);
+        log("Texto parsed $parsedText");
         topics.add(TopicModel(topic: title, text: parsedText));
       }
     }
+
     sendDocument(topics);
   }
 
   Future<void> sendDocument(List<TopicModel> topics) async {
+    try{
     final document = DocumentGeneratedModel(
       key: widget.phone,
       topics: topics,
@@ -109,11 +116,13 @@ class _FormattedTextState extends State<FormattedText> {
     var directory = await getExternalStorageDirectory();
     String docxFilePath = '${directory?.path}/arquivo.docx';
 
-    try {
+
+
       File docxFile = await File(docxFilePath).writeAsBytes(bytes);
 
       OpenFile.open(docxFile.path.substring(1, docxFile.path.length));
     } catch (e) {
+      showError("Ocorreu um erro !");
       print(e);
     }
   }
@@ -201,9 +210,13 @@ class _FormattedTextState extends State<FormattedText> {
     widget.scrips[index] = scrip;
   }
 
-  Future<TeachingModel> getTeaching(String idTeaching, String idSurvey) async {
-    final newTeaching = await repository.getTeachings(idTeaching, idSurvey);
-    return newTeaching;
+  Future<TeachingModel?> getTeaching(String idTeaching, String idSurvey) async {
+    try{
+      final newTeaching = await repository.getTeachings(idTeaching, idSurvey);
+      return newTeaching;
+    }catch(e){
+      showError("Ocorreu um erro !");
+    }
   }
 
   void changeSelectedTeaching(int scripIndex, int newSelectedTeaching) async {
@@ -215,7 +228,10 @@ class _FormattedTextState extends State<FormattedText> {
     );
     print("Response data > $resp");
     scrip.changeSelectedTeaching(newSelectedTeaching);
-    scrip.teachings[newSelectedTeaching] = resp;
+    if(resp != null){
+      scrip.teachings[newSelectedTeaching] = resp;
+
+    }
     widget.scrips[scripIndex] = scrip;
     setState(() {});
   }
@@ -407,6 +423,7 @@ class _FormattedTextState extends State<FormattedText> {
             for (var controller in controllers) {
               if (controller.isRequired && controller.text.isEmpty) {
                 canNavigate = false;
+                showError("Por favor, preencha os campos obrigatorios");
               }
             }
             canNavigate ? mountText() : null;
@@ -421,16 +438,22 @@ class _FormattedTextState extends State<FormattedText> {
         onTap: () {
           FocusScope.of(context).requestFocus(FocusNode());
         },
-        child: SingleChildScrollView(
-          child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  children: inlineWidgets,
-                ),
-              )),
+        child: Visibility(
+          visible: isLoading == false,
+          replacement: const Center(
+            child: CircularProgressIndicator(),
+          ),
+          child: SingleChildScrollView(
+            child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    children: inlineWidgets,
+                  ),
+                )),
+          ),
         ),
       ),
     );

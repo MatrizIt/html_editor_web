@@ -12,7 +12,7 @@ mixin Messages<T extends StatefulWidget> on State<T> {
       CustomSnackBar.error(
         maxLines: 4,
         message: message,
-        backgroundColor: Colors.lightBlueAccent,
+        backgroundColor: Colors.red,
         textStyle: textStyle,
       ),
     );
