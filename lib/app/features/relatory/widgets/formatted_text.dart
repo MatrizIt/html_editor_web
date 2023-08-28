@@ -71,10 +71,8 @@ class _FormattedTextState extends State<FormattedText> {
           anotherScrip?.teachings.forEach((teaching) {
             if (anotherScrip.selectedTeachings
                 .contains(anotherScrip.teachings.indexOf(teaching))) {
-              text.replaceAll(scrip.teachings[0].text,"");
               teaching.gatilhos?.forEach((gatilho) {
                 if (gatilho.idScrip == scrip.id) {
-
                   text += "\n${gatilho.teachingText}";
                 }
               });
@@ -197,7 +195,6 @@ class _FormattedTextState extends State<FormattedText> {
     );*/
   }
 
-
   void changeScripVisibility(int index) {
     final scrip = widget.scrips[index];
     scrip.changeVisibility();
@@ -263,7 +260,20 @@ class _FormattedTextState extends State<FormattedText> {
               teaching.gatilhos?.forEach((gatilho) {
                 if (gatilho.idScrip == scrip.id) {
                   setState(() {
-                    text += "\n" + gatilho.teachingText;
+                    text += "${gatilho.teachingText}\n"
+                        .replaceAll("<br>", "\n")
+                        .replaceAll("</br>", "\n")
+                        .replaceAll("&nbsp;", " ")
+                        .replaceAll("<div>", "")
+                        .replaceAll("</div>", "\n")
+                        .replaceAll(RegExp(r"<[^>]+>"), "");
+                    final textToRemove = scrip.teachings[0].text
+                        .replaceAll("<br>", "\n")
+                        .replaceAll("</br>", "\n")
+                        .replaceAll("&nbsp;", " ")
+                        .replaceAll("<div>", "")
+                        .replaceAll("</div>", "\n");
+                    text = text.replaceAll(textToRemove, "");
                   });
                 }
               });
@@ -396,10 +406,9 @@ class _FormattedTextState extends State<FormattedText> {
           if (_formKey.currentState?.validate() ?? false) {
             for (var controller in controllers) {
               if (controller.isRequired && controller.text.isEmpty) {
-                //canNavigate = false;
+                canNavigate = false;
               }
             }
-            print(canNavigate);
             canNavigate ? mountText() : null;
           }
         },
