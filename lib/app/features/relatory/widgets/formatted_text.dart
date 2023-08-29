@@ -64,6 +64,7 @@ class _FormattedTextState extends State<FormattedText> with Messages<FormattedTe
         if (scrip.teachings.isNotEmpty) {
           for (int selectedTeaching in scrip.selectedTeachings) {
             text += scrip.getTeachingText(selectedTeaching);
+            text = parseText(text, scrip.teachings[selectedTeaching].id);
           }
           text += "&nbsp;${scrip.finalText}";
         }
@@ -94,9 +95,7 @@ class _FormattedTextState extends State<FormattedText> with Messages<FormattedTe
         for (int i = 0; i <= scrip.leading; i++) {
           //text += "</br>";
         }
-        String parsedText = parseText(text);
-        log("Texto parsed $parsedText");
-        topics.add(TopicModel(topic: title, text: parsedText));
+        topics.add(TopicModel(topic: title, text: text));
       }
     }
 
@@ -135,16 +134,18 @@ class _FormattedTextState extends State<FormattedText> with Messages<FormattedTe
     }
   }
 
-  String parseText(String text) {
+  String parseText(String text, int idTeaching) {
     var regXP = RegExp(r"\[\[(.*?)\]\]");
     String parsedText = text;
     for (PhraseEditingController controller in controllers) {
-      parsedText = parsedText.replaceFirst(
-        controller.phrase,
-        controller.text.isEmpty
-            ? controller.defaultValue ?? "!**"
-            : controller.text,
-      );
+      if(controller.id.startsWith(idTeaching.toString())) {
+        parsedText = parsedText.replaceFirst(
+          controller.phrase,
+          controller.text.isEmpty
+              ? controller.defaultValue ?? "!**"
+              : controller.text,
+        );
+      }
     }
 
     for (var match in regXP.allMatches(parsedText)) {

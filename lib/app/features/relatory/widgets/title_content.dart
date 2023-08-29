@@ -144,7 +144,6 @@ class _TitleContentState extends State<TitleContent> {
         ),
         widget.isVisible == true
             ? SizedBox(
-                height: heightText,
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -169,32 +168,20 @@ class _TitleContentState extends State<TitleContent> {
                     ),
                     SizedBox(
                       width: MediaQuery.sizeOf(context).width / 1.2,
-                      child: TextField(
-                        controller: _controllerText,
-                        focusNode: _focusNode,
-                        onChanged: (text) {
-                          widget.onChangeFinalText("$text\n");
-                         if(_controllerText.text.length == 50 ){
-                           setState(() {
-                             heightText = 70;
-                           });
-                         } else if(_controllerText.text.length == 100){
-                            setState(() {
-                              heightText = 90;
-                            });
-                          }else if(_controllerText.text.length == 150){
-                            setState(() {
-                              heightText = 120;
-                            });
-                          }else if(_controllerText.text.length == 210){
-                           setState(() {
-                             heightText = 140;
-                           });
-                         }
-                        },
-                        maxLines: _controllerText.text.length > 40 ? 5 : 1,
-                        decoration: const InputDecoration(
-                          border: InputBorder.none,
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          maxHeight: 150,
+                        ),
+                        child: TextField(
+                          controller: _controllerText,
+                          focusNode: _focusNode,
+                          onChanged: (text) {
+                            widget.onChangeFinalText("$text\n");
+                          },
+                          maxLines: null,
+                          decoration: const InputDecoration(
+                            border: InputBorder.none,
+                          ),
                         ),
                       ),
                     ),
