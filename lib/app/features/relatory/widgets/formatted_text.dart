@@ -78,13 +78,21 @@ class _FormattedTextState extends State<FormattedText> with Messages<FormattedTe
               teaching.gatilhos?.forEach((gatilho) {
                 if (gatilho.idScrip == scrip.id) {
                   text += "\n${gatilho.teachingText}";
+
+                  final textToRemove = scrip.teachings[0].text
+                      .replaceAll("<br>", "\n")
+                      .replaceAll("</br>", "\n")
+                      .replaceAll("&nbsp;", " ")
+                      .replaceAll("<div>", "")
+                      .replaceAll("</div>", "\n");
+                  text = text.replaceAll(textToRemove, "");
                 }
               });
             }
           });
         }
         for (int i = 0; i <= scrip.leading; i++) {
-          text += "</br>";
+          //text += "</br>";
         }
         String parsedText = parseText(text);
         log("Texto parsed $parsedText");
@@ -139,15 +147,16 @@ class _FormattedTextState extends State<FormattedText> with Messages<FormattedTe
       );
     }
 
-    for (var match in regXP.allMatches(text)) {
+    for (var match in regXP.allMatches(parsedText)) {
       var textMatch = match.group(0);
+      print("Texto que vai remover $textMatch");
       if ((textMatch?.contains("!*") ?? false) ||
           (textMatch?.contains("!**") ?? false)) {
         parsedText = parsedText.replaceAll("$textMatch", "");
       }
     }
 
-    for (var match in regXP.allMatches(text)) {
+    for (var match in regXP.allMatches(parsedText)) {
       var textMatch = match.group(0);
 
       if (textMatch?.contains("[[") ?? false) {
@@ -405,7 +414,7 @@ class _FormattedTextState extends State<FormattedText> with Messages<FormattedTe
               },
               onChangeFinalText: (text) {
                 var scripIndex = widget.scrips.indexOf(scrip);
-                changeScripFinalText(scripIndex, text);
+                changeScripFinalText(scripIndex, text[0].toUpperCase() + text.substring(1));
               }),
         );
       } catch (e, s) {

@@ -32,7 +32,7 @@ class RelatoryRepository extends IRelatoryRepository {
   }
 
   String getDatetime() {
-    return DateFormat("yyyy-MM-dd").format(DateTime.now());
+    return DateFormat("yyyy-MM-dd").format(DateTime.parse("2023-08-28"));
   }
 
   @override
@@ -54,7 +54,7 @@ class RelatoryRepository extends IRelatoryRepository {
       final response = await get(
           "EnsinamentosMesclados?idEnsinamento=$idTeaching&idAgendamento=$idSurvey");
 
-      print("Agendamento e ensinamento ${jsonDecode(response?.data)}");
+      print("EnsinamentosMesclados?idEnsinamento=$idTeaching&idAgendamento=$idSurvey");
 
       if (jsonDecode(response?.data)['ensinamentos'] == []) {
         return throw Exception();

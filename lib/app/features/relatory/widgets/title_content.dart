@@ -43,6 +43,7 @@ class _TitleContentState extends State<TitleContent> {
   bool speechEnabled = false;
   bool isListening = false;
   FocusNode _focusNode = FocusNode();
+  double heightText = 20;
 
   @override
   void initState() {
@@ -143,7 +144,7 @@ class _TitleContentState extends State<TitleContent> {
         ),
         widget.isVisible == true
             ? SizedBox(
-                height: _controllerText.text.length > 40 ? 70 : 20,
+                height: heightText,
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -173,9 +174,23 @@ class _TitleContentState extends State<TitleContent> {
                         focusNode: _focusNode,
                         onChanged: (text) {
                           widget.onChangeFinalText("$text\n");
-                          if (_controllerText.text.length > 40) {
-                            setState(() {});
-                          }
+                         if(_controllerText.text.length == 50 ){
+                           setState(() {
+                             heightText = 70;
+                           });
+                         } else if(_controllerText.text.length == 100){
+                            setState(() {
+                              heightText = 90;
+                            });
+                          }else if(_controllerText.text.length == 150){
+                            setState(() {
+                              heightText = 120;
+                            });
+                          }else if(_controllerText.text.length == 210){
+                           setState(() {
+                             heightText = 140;
+                           });
+                         }
                         },
                         maxLines: _controllerText.text.length > 40 ? 5 : 1,
                         decoration: const InputDecoration(
